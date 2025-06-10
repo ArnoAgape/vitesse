@@ -1,7 +1,7 @@
 [versions]
 agp = "8.10.1"
 hiltAndroidCompiler = "2.56.2"
-kotlin = "2.0.21"
+kotlin = "2.1.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -15,13 +15,15 @@ mockk = "1.14.2"
 moshiKotlin = "1.15.0"
 recyclerview = "1.4.0"
 retrofit = "2.9.0"
-room = "2.7.1"
 ksp = "2.1.21-2.0.1"
+roomRuntime = "2.7.1"
 turbine = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
@@ -36,8 +38,6 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-room-runtime = { group = "androidx.Room", name = "Room-runtime", version.ref = "room" }
-room-compiler = { group = "androidx.Room", name = "Room-compiler", version.ref = "room" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
