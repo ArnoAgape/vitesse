@@ -3,6 +3,7 @@
     <string name="no_candidate">No candidate</string>
     <string name="all">All</string>
     <string name="favorites">Favorites</string>
+    <string name="candidate">Candidate</string>
     <string name="search_candidate">Search a candidate</string>
     <string name="add_candidate">Add a candidate</string>
     <string name="edit_candidate">Edit a candidate</string>
@@ -17,6 +18,7 @@
     <string name="date">Date</string>
     <string name="expected_salary">Expected salary</string>
     <string name="notes">Notes</string>
+    <string name="birthday">Birthday</string>
 
     <string name="save">Save</string>
     <string name="mandatory_field">Mandatory field</string>
@@ -28,7 +30,10 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="call">Call</string>
+    <string name="to_call">To Call</string>
     <string name="sms" translatable="false">SMS</string>
+    <string name="send_email">Send an email</string>
+    <string name="send_sms">Send a SMS</string>
     <string name="about">About</string>
     <string name="back">Back</string>
 </resources>
