@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -70,7 +71,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toBottomOf="@id/appBar"
+        app:layout_constraintBottom_toBottomOf="parent">
         <!-- Screen content goes here. -->
     </androidx.core.widget.NestedScrollView>
 

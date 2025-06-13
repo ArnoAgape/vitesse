@@ -23,12 +23,14 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollViewEditScreen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="85dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -221,6 +223,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:hint="@string/date"
+                    app:hintEnabled="false"
                     app:boxStrokeWidth="2dp"
                     app:errorEnabled="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -289,21 +292,31 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:hint="@string/notes"
-                app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/salary">
+                app:layout_constraintTop_toBottomOf="@+id/salary"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/notesEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="textMultiLine"
+                    android:gravity="top|start"
+                    android:minLines="10"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- espace vertical !-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                app:layout_constraintTop_toBottomOf="@id/notes"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/filledButton"
