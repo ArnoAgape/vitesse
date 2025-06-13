@@ -2,7 +2,16 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Vitesse" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorOutline">@color/primary_variant</item> <!-- focus -->
+
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_variant</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorError">@color/error</item>
     </style>
 
     <style name="Theme.Vitesse" parent="Base.Theme.Vitesse" />

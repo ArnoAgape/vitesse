@@ -19,6 +19,7 @@
     <string name="expected_salary">Expected salary</string>
     <string name="notes">Notes</string>
     <string name="birthday">Birthday</string>
+    <string name="profile_picture">Profile picture</string>
 
     <string name="save">Save</string>
     <string name="mandatory_field">Mandatory field</string>

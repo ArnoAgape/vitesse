@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Fond avec couleur + opacité -->
-    <solid android:color="#0DDF9780" /> <!-- 0D = 5% d'opacité -->
+    <solid android:color="@color/primary_variant_translucent" /> <!-- 0D = 5% d'opacité -->
 
     <!-- bordure -->
     <stroke

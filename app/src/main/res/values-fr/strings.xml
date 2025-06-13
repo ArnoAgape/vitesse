@@ -19,6 +19,7 @@
     <string name="expected_salary">Prétentions salariales</string>
     <string name="notes">Notes</string>
     <string name="birthday">Anniversaire</string>
+    <string name="profile_picture">Photo de profil</string>
 
     <string name="save">Sauvegarder</string>
     <string name="mandatory_field">Champ obligatoire</string>
