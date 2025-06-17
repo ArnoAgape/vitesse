@@ -34,6 +34,8 @@ import java.time.format.DateTimeFormatter
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
+    private var candidateId: Long = -1L
+    private lateinit var candidate: Candidate
     private lateinit var binding: DetailScreenBinding
     private val viewModel: DetailViewModel by viewModels()
 
@@ -48,6 +50,9 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
+
+        viewModel.getCandidateById(candidateId)
 
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -70,8 +75,6 @@ class DetailFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        setupSave()
-        setupToolbar()
         observeCandidate()
     }
 
@@ -79,8 +82,9 @@ class DetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.candidateFlow.collect { candidate: Candidate? ->
-                        candidate?.let {
+                    viewModel.candidateFlow.collect { candidateResult ->
+                        candidateResult?.let {
+                            candidate = it
                             binding.phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
                             binding.message.setOnClickListener { sendSms(candidate.phone) }
                             binding.email.setOnClickListener { sendEmail(candidate.email) }
@@ -88,6 +92,7 @@ class DetailFragment : Fragment() {
                             binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
                             binding.salaryConverted.text
+                            setupToolbar(candidate)
                         }
                     }
                 }
@@ -100,10 +105,6 @@ class DetailFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun setupSave() {
-        //
     }
 
     private fun showDeleteCandidateDialog() {
@@ -122,10 +123,12 @@ class DetailFragment : Fragment() {
             .show()
     }
 
-    private fun setupToolbar() {
+    private fun setupToolbar(candidate: Candidate) {
         val toolbar = binding.toolbar
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.candidate)
+
+        val fullName = "${candidate.firstname} ${candidate.lastname}"
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = fullName
         toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -138,8 +141,9 @@ class DetailFragment : Fragment() {
 
         val today = LocalDate.now()
         val age = Period.between(date, today).years
+        val old = getString(R.string.age)
 
-        return "$birthdate (${age} ans)"
+        return "$birthdate (${age} $old)"
     }
 
     private fun dialPhoneNumber(phoneNumber: String) {
