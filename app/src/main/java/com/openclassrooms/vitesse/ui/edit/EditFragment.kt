@@ -1,4 +1,4 @@
-package com.openclassrooms.vitesse.ui.add
+package com.openclassrooms.vitesse.ui.edit
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,14 +8,15 @@ import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.AddScreenBinding
+import com.openclassrooms.vitesse.databinding.EditScreenBinding
 import com.openclassrooms.vitesse.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 
 @AndroidEntryPoint
-class AddFragment : Fragment() {
+class EditFragment : Fragment() {
 
-    private lateinit var binding: AddScreenBinding
+    private lateinit var binding: EditScreenBinding
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
@@ -23,7 +24,7 @@ class AddFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = AddScreenBinding.inflate(inflater, container, false)
+        binding = EditScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
 

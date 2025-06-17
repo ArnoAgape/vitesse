@@ -15,6 +15,8 @@ import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.HomeScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.add.AddFragment
+import com.openclassrooms.vitesse.ui.detail.DetailFragment
+import com.openclassrooms.vitesse.ui.edit.EditFragment
 import com.openclassrooms.vitesse.ui.home.CandidateAdapter.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -53,8 +55,8 @@ class HomeFragment : Fragment(), OnItemClickListener {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.candidatesFlow.collect { candidates ->
-                        candidateAdapter.submitList(candidates)
+                    viewModel.displayedCandidatesFlow.collect { list ->
+                        candidateAdapter.submitList(list)
                     }
                 }
                 launch {
@@ -62,11 +64,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
                         errorMessage?.let {
                             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                         }
-                    }
-                }
-                launch {
-                    viewModel.favoriteCandidatesFlow.collect { candidates ->
-                        candidateAdapter.submitList(candidates)
                     }
                 }
             }
@@ -84,7 +81,11 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(item: Candidate) {
-        // envoyer vers la page detail_screen
+        parentFragmentManager
+            .beginTransaction()
+            .replace(R.id.container, DetailFragment())
+            .addToBackStack(null)
+            .commit()
     }
 }
 
