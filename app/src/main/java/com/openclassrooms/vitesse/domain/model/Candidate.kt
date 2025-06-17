@@ -4,13 +4,14 @@ import com.openclassrooms.vitesse.data.dto.CandidateDto
 
 data class Candidate(
     val id: Long,
-    var firstname: String,
-    var lastname: String,
-    var phone: String,
-    var email: String,
-    var birthdate: String,
-    var salary: Double,
-    var notes: String
+    val firstname: String,
+    val lastname: String,
+    val phone: String,
+    val email: String,
+    val birthdate: String,
+    val salary: Double,
+    val notes: String,
+    val isFavorite: Boolean
 ) {
 
     fun toDto(): CandidateDto {
@@ -22,7 +23,8 @@ data class Candidate(
             email = email,
             birthdate = birthdate,
             salary = salary,
-            notes = notes
+            notes = notes,
+            isFavorite = isFavorite
         )
     }
 
@@ -36,7 +38,8 @@ data class Candidate(
                 email = dto.email,
                 birthdate = dto.birthdate,
                 salary = dto.salary,
-                notes = dto.notes
+                notes = dto.notes,
+                isFavorite = dto.isFavorite
             )
         }
     }

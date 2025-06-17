@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.openclassrooms.vitesse.data.converter.Converters
 import com.openclassrooms.vitesse.data.dao.CandidateDao
 import com.openclassrooms.vitesse.data.dto.CandidateDto
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +15,6 @@ import kotlinx.coroutines.launch
     version = 1,
     exportSchema = false
 )
-@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun candidateDao(): CandidateDao
 
@@ -59,35 +56,33 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         suspend fun populateDatabase(
-            sleepDao: CandidateDao
+            candidateDao: CandidateDao
         ) {
 
-
-            sleepDao.insertCandidate(
+            candidateDao.insertCandidate(
                 CandidateDto(
-                    id = 1,
-                    firstname = "Arno",
-                    lastname = "Bouiron",
-                    phone = "+33 6 26 23 25 58",
-                    email = "arno.bouiron@gmail.com",
+                    firstname = "Poseidon",
+                    lastname = "Bwiron",
+                    phone = "+33 6 19 35 40 58",
+                    email = "poseidon.bwiron@gmail.com",
                     birthdate = "09/12/1993",
                     salary = 2000.0,
-                    notes = "Bla bla bla"
+                    notes = "Bla bla bla",
+                    isFavorite = true
                 )
             )
-            sleepDao.insertCandidate(
+            candidateDao.insertCandidate(
                 CandidateDto(
-                    id = 1,
-                    firstname = "Diane",
-                    lastname = "Bouiron",
+                    firstname = "Artemis",
+                    lastname = "Bwiran",
                     phone = "+33 6 16 44 32 24",
-                    email = "dbouiron@gmail.com",
+                    email = "abwiran@gmail.com",
                     birthdate = "26/05/2000",
                     salary = 2450.0,
-                    notes = "You pla la"
+                    notes = "You pla la",
+                    isFavorite = false
                 )
             )
         }
     }
-
 }

@@ -8,28 +8,31 @@ import androidx.room.PrimaryKey
 data class CandidateDto(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Long = 0,
+    val id: Long = 0,
 
 
     @ColumnInfo(name = "firstname")
-    var firstname: String,
+    val firstname: String,
 
     @ColumnInfo(name = "lastname")
-    var lastname: String,
+    val lastname: String,
 
     @ColumnInfo(name = "phone")
-    var phone: String,
+    val phone: String,
 
     @ColumnInfo(name = "email")
-    var email: String,
+    val email: String,
 
     @ColumnInfo(name = "birthdate")
-    var birthdate: String,
+    val birthdate: String,
 
     @ColumnInfo(name = "salary")
-    var salary: Double,
+    val salary: Double,
 
     @ColumnInfo(name = "notes")
-    var notes: String
+    val notes: String,
+
+    @ColumnInfo(name = "favorite")
+    val isFavorite: Boolean
 
 )

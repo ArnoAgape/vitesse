@@ -2,24 +2,38 @@ package com.openclassrooms.vitesse.data.repository
 
 import com.openclassrooms.vitesse.data.dao.CandidateDao
 import com.openclassrooms.vitesse.domain.model.Candidate
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 @Singleton
 class CandidateRepository(private val candidateDao: CandidateDao) {
 
     // Get all candidates
-    suspend fun getAllCandidates(): Result<List<Candidate>> {
-        return withContext(Dispatchers.IO) {
-            try {
-                val list = candidateDao.getAllCandidates()
-                    .map { Candidate.fromDto(it) }
-                Result.success(list)
-            } catch (e: Exception) {
-                Result.failure(e)
+    fun getAllCandidates(): Flow<Result<List<Candidate>>> {
+        return candidateDao.getAllCandidates()
+            .map { dtoList ->
+                val domainList = dtoList.map { Candidate.fromDto(it) }
+                Result.success(domainList)
             }
-        }
+            .catch { e ->
+                emit(Result.failure(e))
+            }
+    }
+
+    // Get all favorite candidates
+    fun getAllFavoriteCandidates(): Flow<Result<List<Candidate>>> {
+        return candidateDao.getAllFavoriteCandidates(true)
+            .map { dtoList ->
+                val domainList = dtoList.map { Candidate.fromDto(it) }
+                Result.success(domainList)
+            }
+            .catch { e ->
+                emit(Result.failure(e))
+            }
     }
 
     // Add a new candidate
@@ -52,9 +66,7 @@ class CandidateRepository(private val candidateDao: CandidateDao) {
     suspend fun editCandidate(candidate: Candidate): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
-                candidate.id.let {
-                    candidateDao.updateCandidates()
-                }
+                candidateDao.editCandidate(candidate.toDto())
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(e)
