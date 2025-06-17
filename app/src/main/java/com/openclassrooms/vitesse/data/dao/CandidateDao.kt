@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.openclassrooms.vitesse.data.dto.CandidateDto
+import com.openclassrooms.vitesse.domain.model.Candidate
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,6 +16,9 @@ interface CandidateDao {
 
     @Query("SELECT * FROM candidate")
     fun getAllCandidates(): Flow<List<CandidateDto>>
+
+    @Query("SELECT * FROM candidate WHERE id = :id")
+    suspend fun getCandidateById(id: Long): CandidateDto
 
     @Query("SELECT * FROM candidate WHERE favorite = :isFavorite")
     fun getAllFavoriteCandidates(isFavorite: Boolean): Flow<List<CandidateDto>>

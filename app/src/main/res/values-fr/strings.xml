@@ -29,6 +29,7 @@
     <string name="deletion">Suppression</string>
     <string name="sure_delete">Êtes-vous sûr(e) de vouloir supprimer ce candidat ? Cette action est irréversible.</string>
     <string name="confirm">Confirmer</string>
+    <string name="deleted">Candidat supprimé avec succès</string>
     <string name="cancel">Annuler</string>
     <string name="call">Appel</string>
     <string name="to_call">Appeler</string>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -52,7 +53,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     private fun observeCandidates() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.displayedCandidatesFlow.collect { list ->
@@ -81,11 +82,12 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(item: Candidate) {
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.container, DetailFragment())
+        val fragment = DetailFragment.newInstance(item.id)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
             .addToBackStack(null)
             .commit()
+
     }
 }
 

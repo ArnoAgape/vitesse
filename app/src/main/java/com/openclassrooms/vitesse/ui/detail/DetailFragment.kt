@@ -1,24 +1,41 @@
 package com.openclassrooms.vitesse.ui.detail
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import com.openclassrooms.vitesse.R
-import com.openclassrooms.vitesse.databinding.AddScreenBinding
 import com.openclassrooms.vitesse.databinding.DetailScreenBinding
-import com.openclassrooms.vitesse.databinding.EditScreenBinding
-import com.openclassrooms.vitesse.ui.home.HomeViewModel
+import com.openclassrooms.vitesse.domain.model.Candidate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
+import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
     private lateinit var binding: DetailScreenBinding
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: DetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,19 +48,142 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.edit_candidate, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.edit -> {
+                        true
+                    }
+
+                    R.id.delete -> {
+                        showDeleteCandidateDialog()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         setupSave()
         setupToolbar()
+        observeCandidate()
+    }
+
+    private fun observeCandidate() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.candidateFlow.collect { candidate: Candidate? ->
+                        candidate?.let {
+                            binding.phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
+                            binding.message.setOnClickListener { sendSms(candidate.phone) }
+                            binding.email.setOnClickListener { sendEmail(candidate.email) }
+                            binding.birthdateEdit.text = formatBirthdateWithAge(candidate.birthdate)
+                            binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
+                            binding.notesEdit.text = candidate.notes
+                            binding.salaryConverted.text
+                        }
+                    }
+                }
+                launch {
+                    viewModel.errorFlow.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun setupSave() {
         //
     }
 
+    private fun showDeleteCandidateDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.deletion)
+            .setMessage(R.string.sure_delete)
+            .setPositiveButton(R.string.confirm) { dialog, _ ->
+
+                Toast.makeText(context, R.string.deleted, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
     private fun setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener {
+        val toolbar = binding.toolbar
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.candidate)
+        toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatBirthdateWithAge(birthdate: String): String {
+        val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val date = LocalDate.parse(birthdate, inputFormatter)
+
+        val today = LocalDate.now()
+        val age = Period.between(date, today).years
+
+        return "$birthdate (${age} ans)"
+    }
+
+    private fun dialPhoneNumber(phoneNumber: String) {
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = "tel:$phoneNumber".toUri()
+        }
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(intent)
+        }
+    }
+
+    private fun sendSms(phoneNumber: String, message: String = "") {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "smsto:$phoneNumber".toUri()
+            putExtra("sms_body", message)
+        }
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(intent)
+        }
+    }
+
+    private fun sendEmail(emailAddress: String, subject: String = "", body: String = "") {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "mailto:$emailAddress".toUri()
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(intent)
+        }
+    }
+
+    companion object {
+        private const val ARG_CANDIDATE_ID = "candidate_id"
+
+        fun newInstance(id: Long): DetailFragment {
+            val fragment = DetailFragment()
+            val args = Bundle()
+            args.putLong(ARG_CANDIDATE_ID, id)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
 }
+
 

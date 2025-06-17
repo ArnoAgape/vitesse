@@ -6,6 +6,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -34,6 +35,19 @@ class CandidateRepository(private val candidateDao: CandidateDao) {
             .catch { e ->
                 emit(Result.failure(e))
             }
+    }
+
+    // Get one candidate by id
+    suspend fun getCandidate(id: Long): Result<Candidate> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val user = candidateDao.getCandidateById(id)
+                    .let { Candidate.fromDto(it) }
+                Result.success(user)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
     }
 
     // Add a new candidate

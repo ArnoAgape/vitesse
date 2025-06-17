@@ -61,25 +61,25 @@ abstract class AppDatabase : RoomDatabase() {
 
             candidateDao.insertCandidate(
                 CandidateDto(
-                    firstname = "Poseidon",
-                    lastname = "Bwiron",
+                    firstname = "John",
+                    lastname = "Doe",
                     phone = "+33 6 19 35 40 58",
-                    email = "poseidon.bwiron@gmail.com",
+                    email = "jdoe@mail.fr",
                     birthdate = "09/12/1993",
                     salary = 2000.0,
-                    notes = "Bla bla bla",
+                    notes = "Very good candidate",
                     isFavorite = true
                 )
             )
             candidateDao.insertCandidate(
                 CandidateDto(
-                    firstname = "Artemis",
-                    lastname = "Bwiran",
+                    firstname = "Martin",
+                    lastname = "Dupond",
                     phone = "+33 6 16 44 32 24",
-                    email = "abwiran@gmail.com",
+                    email = "mdupond@mail.fr",
                     birthdate = "26/05/2000",
                     salary = 2450.0,
-                    notes = "You pla la",
+                    notes = "May hire him",
                     isFavorite = false
                 )
             )
