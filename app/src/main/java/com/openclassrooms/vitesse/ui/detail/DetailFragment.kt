@@ -66,7 +66,7 @@ class DetailFragment : Fragment() {
                     }
 
                     R.id.delete -> {
-                        showDeleteCandidateDialog()
+                        showDeleteConfirmationDialog()
                         true
                     }
 
@@ -107,11 +107,13 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun showDeleteCandidateDialog() {
+    private fun showDeleteConfirmationDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.deletion)
             .setMessage(R.string.sure_delete)
             .setPositiveButton(R.string.confirm) { dialog, _ ->
+                viewModel.deleteCandidate(candidate)
+                parentFragmentManager.popBackStack()
 
                 Toast.makeText(context, R.string.deleted, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
