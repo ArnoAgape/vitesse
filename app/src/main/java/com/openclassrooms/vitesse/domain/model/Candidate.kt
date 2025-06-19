@@ -11,7 +11,7 @@ data class Candidate(
     val birthdate: String,
     val salary: Double,
     val notes: String,
-    val isFavorite: Boolean
+    val isFavorite: Boolean = false
 ) {
 
     fun toDto(): CandidateDto {

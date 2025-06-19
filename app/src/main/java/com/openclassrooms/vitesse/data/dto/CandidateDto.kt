@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class CandidateDto(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long = 0,
+    val id: Long,
 
 
     @ColumnInfo(name = "firstname")

@@ -61,6 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
 
             candidateDao.insertCandidate(
                 CandidateDto(
+                    id = 0,
                     firstname = "John",
                     lastname = "Doe",
                     phone = "+33 6 19 35 40 58",
@@ -73,6 +74,7 @@ abstract class AppDatabase : RoomDatabase() {
             )
             candidateDao.insertCandidate(
                 CandidateDto(
+                    id = 1,
                     firstname = "Martin",
                     lastname = "Dupond",
                     phone = "+33 6 16 44 32 24",
