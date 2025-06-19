@@ -61,7 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
 
             candidateDao.insertCandidate(
                 CandidateDto(
-                    id = 0,
+                    id = 1,
                     firstname = "John",
                     lastname = "Doe",
                     phone = "+33 6 19 35 40 58",
@@ -69,12 +69,13 @@ abstract class AppDatabase : RoomDatabase() {
                     birthdate = "09/12/1993",
                     salary = 2000.0,
                     notes = "Very good candidate",
-                    isFavorite = true
+                    profilePicture = null,
+                    isFavorite = false
                 )
             )
             candidateDao.insertCandidate(
                 CandidateDto(
-                    id = 1,
+                    id = 2,
                     firstname = "Martin",
                     lastname = "Dupond",
                     phone = "+33 6 16 44 32 24",
@@ -82,6 +83,7 @@ abstract class AppDatabase : RoomDatabase() {
                     birthdate = "26/05/2000",
                     salary = 2450.0,
                     notes = "May hire him",
+                    profilePicture = null,
                     isFavorite = false
                 )
             )

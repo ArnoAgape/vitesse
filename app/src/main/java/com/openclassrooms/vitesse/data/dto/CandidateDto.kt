@@ -32,6 +32,9 @@ data class CandidateDto(
     @ColumnInfo(name = "notes")
     val notes: String,
 
+    @ColumnInfo(name = "profile_picture")
+    val profilePicture: String?,
+
     @ColumnInfo(name = "favorite")
     val isFavorite: Boolean
 

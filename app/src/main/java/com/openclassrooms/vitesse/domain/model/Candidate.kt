@@ -11,6 +11,7 @@ data class Candidate(
     val birthdate: String,
     val salary: Double,
     val notes: String,
+    val profilePicture: String? = null,
     val isFavorite: Boolean = false
 ) {
 
@@ -24,6 +25,7 @@ data class Candidate(
             birthdate = birthdate,
             salary = salary,
             notes = notes,
+            profilePicture = profilePicture,
             isFavorite = isFavorite
         )
     }
@@ -39,6 +41,7 @@ data class Candidate(
                 birthdate = dto.birthdate,
                 salary = dto.salary,
                 notes = dto.notes,
+                profilePicture = dto.profilePicture,
                 isFavorite = dto.isFavorite
             )
         }
