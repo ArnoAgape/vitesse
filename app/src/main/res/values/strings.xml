@@ -37,6 +37,8 @@
     <string name="sms" translatable="false">SMS</string>
     <string name="send_email">Send an email</string>
     <string name="send_sms">Send a SMS</string>
+    <string name="no_email">No email application available</string>
+    <string name="no_phone">No messaging application available</string>
     <string name="about">About</string>
     <string name="back">Back</string>
 </resources>

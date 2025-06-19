@@ -16,7 +16,7 @@ import kotlin.getValue
 class AddFragment : Fragment() {
 
     private lateinit var binding: AddScreenBinding
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: AddViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

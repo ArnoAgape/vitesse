@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:title="@string/back"
-        android:titleTextColor="@android:color/white"
+        android:background="@color/primary_translucent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back">
 
@@ -18,6 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_candidate"
+            android:tint="?attr/colorOnPrimary"
             android:textSize="22sp" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -52,6 +53,7 @@
                 android:layout_marginTop="25dp"
                 android:contentDescription="@string/last_name"
                 android:src="@drawable/ic_person"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
@@ -103,6 +105,7 @@
                 android:layout_marginTop="40dp"
                 android:contentDescription="@string/phone"
                 android:src="@drawable/ic_phone"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/lastName" />
@@ -135,6 +138,7 @@
                 android:layout_marginTop="20dp"
                 android:contentDescription="@string/email"
                 android:src="@drawable/ic_email"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/phone" />
@@ -167,6 +171,7 @@
                 android:layout_marginTop="20dp"
                 android:contentDescription="@string/date"
                 android:src="@drawable/ic_birthdate"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email" />
@@ -247,6 +252,7 @@
                 android:layout_marginTop="20dp"
                 android:contentDescription="@string/expected_salary"
                 android:src="@drawable/ic_dollar"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/birthdateBackground" />
@@ -279,6 +285,7 @@
                 android:layout_marginTop="20dp"
                 android:contentDescription="@string/notes"
                 android:src="@drawable/ic_edit"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/salary" />

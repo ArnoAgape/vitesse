@@ -1,7 +1,6 @@
 package com.openclassrooms.vitesse.ui.detail
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -10,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
@@ -136,7 +134,6 @@ class DetailFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun formatBirthdateWithAge(birthdate: String): String {
         val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val date = LocalDate.parse(birthdate, inputFormatter)
@@ -154,6 +151,8 @@ class DetailFragment : Fragment() {
         }
         if (intent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(intent)
+        } else {
+            Toast.makeText(requireContext(), R.string.no_phone, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -164,6 +163,8 @@ class DetailFragment : Fragment() {
         }
         if (intent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(intent)
+        } else {
+            Toast.makeText(requireContext(), R.string.no_phone, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -175,6 +176,8 @@ class DetailFragment : Fragment() {
         }
         if (intent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(intent)
+        } else {
+            Toast.makeText(requireContext(), R.string.no_email, Toast.LENGTH_SHORT).show()
         }
     }
 

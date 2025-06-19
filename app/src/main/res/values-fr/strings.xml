@@ -36,6 +36,8 @@
     <string name="to_call">Appeler</string>
     <string name="send_email">Envoyer un e-mail</string>
     <string name="send_sms">Envoyer un SMS</string>
+    <string name="no_email">Aucune application d\'email disponible</string>
+    <string name="no_phone">Aucune application de messagerie disponible</string>
     <string name="about">À propos</string>
     <string name="back">Retour</string>
 </resources>

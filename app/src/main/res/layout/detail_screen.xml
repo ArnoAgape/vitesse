@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:title="@string/edit_candidate"
-        android:titleTextColor="@android:color/white"
+        android:background="@color/primary_translucent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/edit_candidate"
         app:navigationIcon="@drawable/ic_arrow_back">
@@ -74,6 +74,7 @@
                         android:padding="1dp"
                         android:scaleType="center"
                         android:src="@drawable/ic_phone"
+                        android:tint="?attr/colorOnPrimary"
                         app:shapeAppearanceOverlay="@style/CircularImage"
                         app:strokeColor="@color/primary_variant"
                         app:strokeWidth="1dp" />
@@ -110,6 +111,7 @@
                         android:padding="1dp"
                         android:scaleType="center"
                         android:src="@drawable/ic_message"
+                        android:tint="?attr/colorOnPrimary"
                         app:shapeAppearanceOverlay="@style/CircularImage"
                         app:strokeColor="@color/primary_variant"
                         app:strokeWidth="1dp" />
@@ -146,6 +148,7 @@
                         android:padding="1dp"
                         android:scaleType="center"
                         android:src="@drawable/ic_email"
+                        android:tint="?attr/colorOnPrimary"
                         app:shapeAppearanceOverlay="@style/CircularImage"
                         app:strokeColor="@color/primary_variant"
                         app:strokeWidth="1dp" />
