@@ -90,6 +90,7 @@ class DetailFragment : Fragment() {
                             binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
                             binding.salaryConverted.text
+                            binding.profilePicture
                             setupToolbar(candidate)
                         }
                     }

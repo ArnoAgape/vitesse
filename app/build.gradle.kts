@@ -60,6 +60,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
 
+    // Glide for pictures
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+
     // Moshi JSON Library
     implementation(libs.moshi)
 
