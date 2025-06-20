@@ -17,7 +17,7 @@ import kotlin.getValue
 class EditFragment : Fragment() {
 
     private lateinit var binding: EditScreenBinding
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: EditViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

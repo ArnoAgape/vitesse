@@ -167,6 +167,7 @@
                 android:layout_marginTop="20dp"
                 android:contentDescription="@string/date"
                 android:src="@drawable/ic_birthdate"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email" />
@@ -202,7 +203,7 @@
                     android:layout_marginTop="30dp"
                     android:drawablePadding="35dp"
                     android:text="@string/enter_date"
-                    android:textSize="33sp"
+                    android:textSize="25sp"
                     app:drawableEndCompat="@drawable/ic_calendar" />
 
                 <View
@@ -222,9 +223,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:hint="@string/date"
-                    app:hintEnabled="false"
-                    app:boxStrokeWidth="2dp"
                     app:errorEnabled="true"
+                    app:boxStrokeWidth="2dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/email">
@@ -233,8 +233,9 @@
                         android:id="@+id/birthdateEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/format_date"
-                        android:inputType="date" />
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:inputType="none" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

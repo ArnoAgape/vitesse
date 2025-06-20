@@ -148,7 +148,7 @@ class AddFragment : Fragment() {
     }
 
     private fun isEmailValid(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     fun isPhoneNumberValid(phone: String): Boolean {
@@ -162,10 +162,17 @@ class AddFragment : Fragment() {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePicker = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-            val formattedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
-            binding.birthdateEdit.setText(formattedDate)
-        }, year, month, day)
+        val datePicker =
+            DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                val formattedDate = String.format(
+                    Locale.getDefault(),
+                    "%02d/%02d/%04d",
+                    selectedDay,
+                    selectedMonth + 1,
+                    selectedYear
+                )
+                binding.birthdateEdit.setText(formattedDate)
+            }, year, month, day)
 
         datePicker.show()
     }

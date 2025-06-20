@@ -25,6 +25,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.openclassrooms.vitesse.ui.edit.EditFragment
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
@@ -61,6 +62,7 @@ class DetailFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.edit -> {
+                        setupEditButton()
                         true
                     }
 
@@ -127,6 +129,14 @@ class DetailFragment : Fragment() {
             }
             .create()
             .show()
+    }
+
+    private fun setupEditButton() {
+        parentFragmentManager
+            .beginTransaction()
+            .replace(R.id.container, EditFragment())
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupToolbar(candidate: Candidate) {
