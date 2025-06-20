@@ -24,6 +24,7 @@ import kotlin.getValue
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
@@ -90,7 +91,11 @@ class DetailFragment : Fragment() {
                             binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
                             binding.salaryConverted.text
-                            binding.profilePicture
+                            Glide.with(binding.root.context)
+                                .load(candidate.profilePicture)
+                                .placeholder(R.drawable.ic_profile_pic)
+                                .error(R.drawable.ic_profile_pic)
+                                .into(binding.profilePicture)
                             setupToolbar(candidate)
                         }
                     }

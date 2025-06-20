@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Fond avec couleur + opacité -->
-    <solid android:color="#4D749FB8" /> <!-- E6 = 30% d'opacité -->
+    <solid android:color="#4DDF9780" /> <!-- E6 = 30% d'opacité -->
 
     <!-- Coins arrondis -->
     <corners android:radius="40dp" />

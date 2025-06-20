@@ -3,6 +3,7 @@ package com.openclassrooms.vitesse.ui.add
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,7 +77,16 @@ class AddFragment : Fragment() {
 
             val isLastNameValid = validateField(newLastName, binding.lastName)
 
-            val isPhoneValid = validateField(newPhone, binding.phone)
+            val isPhoneValid = if (newPhone.isBlank()) {
+                binding.phone.error = getString(R.string.mandatory_field)
+                false
+            } else if (!isPhoneNumberValid(newPhone)) {
+                binding.phone.error = getString(R.string.invalid_format)
+                false
+            } else {
+                binding.phone.error = null
+                true
+            }
 
             val isEmailValid = if (newEmail.isBlank()) {
                 binding.email.error = getString(R.string.mandatory_field)
@@ -140,6 +150,11 @@ class AddFragment : Fragment() {
     private fun isEmailValid(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
+
+    fun isPhoneNumberValid(phone: String): Boolean {
+        return Patterns.PHONE.matcher(phone).matches()
+    }
+
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()

@@ -198,7 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="15dp"
-                    android:text="@string/select_date"
+                    android:text="@string/select_birthdate"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -231,7 +231,6 @@
                     android:layout_marginEnd="20dp"
                     android:hint="@string/date"
                     app:errorEnabled="true"
-                    app:hintEnabled="false"
                     app:boxStrokeWidth="2dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -241,7 +240,6 @@
                         android:id="@+id/birthdateEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/format_date"
                         android:focusable="false"
                         android:clickable="true"
                         android:inputType="none" />
