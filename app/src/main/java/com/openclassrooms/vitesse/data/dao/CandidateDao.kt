@@ -24,8 +24,8 @@ interface CandidateDao {
     fun getAllFavoriteCandidates(isFavorite: Boolean): Flow<List<CandidateDto>>
 
     @Query("DELETE FROM candidate WHERE id = :id")
-    suspend fun deleteCandidateById(id: Long)
+    suspend fun deleteCandidateById(id: Long?)
 
     @Update
-    suspend fun editCandidate(candidate: CandidateDto)
+    suspend fun updateCandidate(candidate: CandidateDto)
 }

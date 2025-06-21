@@ -8,14 +8,14 @@
     <string name="add_candidate">Add a candidate</string>
     <string name="edit_candidate">Edit a candidate</string>
     <string name="enter_date">Choose a date</string>
-    <string name="select_birthdate">Pick a birthdate</string>
+    <string name="select_date">Pick a date</string>
     <string name="format_date">mm/dd/yyyy</string>
 
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="phone">Phone</string>
     <string name="email">Email</string>
-    <string name="date">Date</string>
+    <string name="date_of_birth">Date of birth</string>
     <string name="expected_salary">Expected salary</string>
     <string name="notes">Notes</string>
     <string name="birthday">Birthday</string>

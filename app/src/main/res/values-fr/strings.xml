@@ -8,14 +8,14 @@
     <string name="add_candidate">Ajouter un candidat</string>
     <string name="edit_candidate">Modifier un candidat</string>
     <string name="enter_date">Entrer une date</string>
-    <string name="select_birthdate">Sélectionner une date de naissance</string>
+    <string name="select_date">Sélectionner une date</string>
     <string name="format_date">jj/mm/aaaa</string>
 
     <string name="first_name">Prénom</string>
     <string name="last_name">Nom</string>
     <string name="phone">Téléphone</string>
     <string name="email">E-mail</string>
-    <string name="date">Date</string>
+    <string name="date_of_birth">Date de naissance</string>
     <string name="expected_salary">Prétentions salariales</string>
     <string name="notes">Notes</string>
     <string name="birthday">Anniversaire</string>

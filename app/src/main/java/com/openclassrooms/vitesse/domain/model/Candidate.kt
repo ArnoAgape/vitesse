@@ -3,7 +3,7 @@ package com.openclassrooms.vitesse.domain.model
 import com.openclassrooms.vitesse.data.dto.CandidateDto
 
 data class Candidate(
-    val id: Long,
+    val id: Long?,
     val firstname: String,
     val lastname: String,
     val phone: String,
@@ -11,7 +11,7 @@ data class Candidate(
     val birthdate: String,
     val salary: Double,
     val notes: String,
-    val profilePicture: String? = null,
+    val profilePicture: String,
     val isFavorite: Boolean = false
 ) {
 

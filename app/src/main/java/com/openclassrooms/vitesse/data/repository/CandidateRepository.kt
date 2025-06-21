@@ -77,10 +77,10 @@ class CandidateRepository(private val candidateDao: CandidateDao) {
     }
 
     // Edit a candidate
-    suspend fun editCandidate(candidate: Candidate): Result<Unit> {
+    suspend fun updateCandidate(candidate: Candidate): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
-                candidateDao.editCandidate(candidate.toDto())
+                candidateDao.updateCandidate(candidate.toDto())
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(e)

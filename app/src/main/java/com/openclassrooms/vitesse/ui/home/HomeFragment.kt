@@ -82,12 +82,13 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(item: Candidate) {
-        val fragment = DetailFragment.newInstance(item.id)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .addToBackStack(null)
-            .commit()
-
+        item.id?.let { id ->
+            val fragment = DetailFragment.newInstance(id)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 }
 

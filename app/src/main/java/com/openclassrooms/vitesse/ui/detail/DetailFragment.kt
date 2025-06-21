@@ -132,9 +132,10 @@ class DetailFragment : Fragment() {
     }
 
     private fun setupEditButton() {
+        val fragment = EditFragment.newInstance(candidateId)
         parentFragmentManager
             .beginTransaction()
-            .replace(R.id.container, EditFragment())
+            .replace(R.id.container, fragment)
             .addToBackStack(null)
             .commit()
     }

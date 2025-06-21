@@ -69,7 +69,7 @@ abstract class AppDatabase : RoomDatabase() {
                     birthdate = "09/12/1993",
                     salary = 2000.0,
                     notes = "Very good candidate",
-                    profilePicture = null,
+                    profilePicture = "",
                     isFavorite = false
                 )
             )
@@ -83,7 +83,7 @@ abstract class AppDatabase : RoomDatabase() {
                     birthdate = "26/05/2000",
                     salary = 2450.0,
                     notes = "May hire him",
-                    profilePicture = null,
+                    profilePicture = "",
                     isFavorite = false
                 )
             )

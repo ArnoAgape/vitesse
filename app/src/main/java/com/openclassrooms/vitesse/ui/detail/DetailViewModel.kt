@@ -34,7 +34,6 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-
     fun deleteCandidate(candidate: Candidate) {
         viewModelScope.launch {
             repository.deleteCandidate(candidate)

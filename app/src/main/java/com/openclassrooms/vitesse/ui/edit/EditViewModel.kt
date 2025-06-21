@@ -16,7 +16,6 @@ class EditViewModel @Inject constructor(
     private val repository: CandidateRepository
 ) : ViewModel() {
 
-
     private val _candidateFlow = MutableStateFlow<Candidate?>(null)
     val candidateFlow: StateFlow<Candidate?> = _candidateFlow.asStateFlow()
 
@@ -24,12 +23,21 @@ class EditViewModel @Inject constructor(
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
 
 
-    fun addCandidate(candidate: Candidate) {
+    fun getCandidateById(id: Long) {
         viewModelScope.launch {
-            val result = repository.addCandidate(candidate)
-            if (result.isFailure) {
-                _errorFlow.value = result.exceptionOrNull()?.message ?: "Error while adding a candidate"
+            val result = repository.getCandidate(id)
+            if (result.isSuccess) {
+                _candidateFlow.value = result.getOrNull()
+            } else {
+                _errorFlow.value = result.exceptionOrNull()?.message ?: "Error while collecting the candidate"
             }
+        }
+    }
+
+
+    fun updateCandidate(candidate: Candidate) {
+        viewModelScope.launch {
+            repository.updateCandidate(candidate)
         }
     }
 

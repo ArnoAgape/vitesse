@@ -111,15 +111,15 @@ class AddFragment : Fragment() {
                 return@setOnClickListener
 
             val newCandidate = Candidate(
-                System.currentTimeMillis(),
-                newFirstName,
-                newLastName,
-                newPhone,
-                newEmail,
-                newBirthdate,
-                newSalary,
-                newNotes,
-                newProfilePicture
+                id = null,
+                firstname = newFirstName,
+                lastname = newLastName,
+                phone = newPhone,
+                email = newEmail,
+                birthdate = newBirthdate,
+                salary = newSalary,
+                notes = newNotes,
+                profilePicture = newProfilePicture
             )
             viewModel.addCandidate(newCandidate)
             parentFragmentManager

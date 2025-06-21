@@ -172,7 +172,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:contentDescription="@string/date"
+                android:contentDescription="@string/date_of_birth"
                 android:src="@drawable/ic_birthdate"
                 app:tint="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/firstName"
@@ -198,7 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="15dp"
-                    android:text="@string/select_birthdate"
+                    android:text="@string/select_date"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -229,9 +229,9 @@
                     android:layout_marginStart="22dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
-                    android:hint="@string/date"
+                    android:hint="@string/date_of_birth"
                     app:errorEnabled="true"
-                    app:boxStrokeWidth="2dp"
+                    app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/email">
@@ -277,7 +277,7 @@
                     android:id="@+id/salaryEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class CandidateDto(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long,
+    val id: Long?,
 
 
     @ColumnInfo(name = "firstname")
@@ -33,7 +33,7 @@ data class CandidateDto(
     val notes: String,
 
     @ColumnInfo(name = "profile_picture")
-    val profilePicture: String?,
+    val profilePicture: String,
 
     @ColumnInfo(name = "favorite")
     val isFavorite: Boolean
