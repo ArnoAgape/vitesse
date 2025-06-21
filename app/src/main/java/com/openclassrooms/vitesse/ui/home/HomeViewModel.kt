@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.domain.model.Candidate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.openclassrooms.vitesse.states.State
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +25,9 @@ class HomeViewModel @Inject constructor(
 
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
+
+    private val _uiState = MutableStateFlow(HomeUIState())
+    val uiState: StateFlow<HomeUIState> = _uiState.asStateFlow()
 
     val displayedCandidatesFlow = showFavorites
         .combine(_allCandidatesFlow) { showFav, all ->
@@ -62,3 +66,8 @@ class HomeViewModel @Inject constructor(
     }
 
 }
+
+data class HomeUIState(
+    val result: State = State.Idle,
+    val candidate: List<Candidate> = emptyList()
+)

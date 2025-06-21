@@ -58,7 +58,10 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 launch {
                     viewModel.displayedCandidatesFlow.collect { list ->
                         candidateAdapter.submitList(list)
+                        binding.noCandidate.visibility =
+                            if (list.isEmpty()) View.VISIBLE else View.INVISIBLE
                     }
+
                 }
                 launch {
                     viewModel.errorFlow.collect { errorMessage ->

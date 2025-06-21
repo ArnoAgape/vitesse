@@ -29,7 +29,8 @@ class DetailViewModel @Inject constructor(
             if (result.isSuccess) {
                 _candidateFlow.value = result.getOrNull()
             } else {
-                _errorFlow.value = result.exceptionOrNull()?.message ?: "Error while collecting the candidate"
+                _errorFlow.value =
+                    result.exceptionOrNull()?.message ?: "Error while collecting the candidate"
             }
         }
     }
