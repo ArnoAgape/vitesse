@@ -17,7 +17,7 @@ import com.openclassrooms.vitesse.databinding.HomeScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.add.AddFragment
 import com.openclassrooms.vitesse.ui.detail.DetailFragment
-import com.openclassrooms.vitesse.ui.edit.EditFragment
+import com.openclassrooms.vitesse.states.State
 import com.openclassrooms.vitesse.ui.home.CandidateAdapter.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,6 +55,12 @@ class HomeFragment : Fragment(), OnItemClickListener {
     private fun observeCandidates() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collect { state ->
+                        binding.loading.visibility =
+                            if (state.result == State.Loading) View.VISIBLE else View.GONE
+                    }
+                }
                 launch {
                     viewModel.displayedCandidatesFlow.collect { list ->
                         candidateAdapter.submitList(list)

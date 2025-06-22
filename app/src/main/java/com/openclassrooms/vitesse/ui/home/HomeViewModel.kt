@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,12 +41,19 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadAllCandidates() {
+
+        _uiState.update {
+            it.copy(result = State.Loading)
+        }
+
         viewModelScope.launch {
             repository.getAllCandidates().collect { result ->
                 if (result.isSuccess) {
                     _allCandidatesFlow.value = result.getOrNull() ?: emptyList()
+                    _uiState.update { it.copy(result = State.Success) }
                 } else {
                     _errorFlow.value = result.exceptionOrNull()?.message ?: "Error loading the candidates"
+                    _uiState.update { it.copy(result = State.Error) }
                 }
             }
         }
