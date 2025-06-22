@@ -7,9 +7,11 @@ import com.openclassrooms.vitesse.domain.model.Candidate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.openclassrooms.vitesse.states.State
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,16 +26,26 @@ class HomeViewModel @Inject constructor(
     private val _favoriteCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
     val showFavorites = MutableStateFlow(false)
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
 
     private val _uiState = MutableStateFlow(HomeUIState())
     val uiState: StateFlow<HomeUIState> = _uiState.asStateFlow()
 
-    val displayedCandidatesFlow = showFavorites
-        .combine(_allCandidatesFlow) { showFav, all ->
-            if (showFav) _favoriteCandidatesFlow.value else all
+    val displayedCandidatesFlow = combine(_allCandidatesFlow, _searchQuery) { list, query ->
+        if (query.isBlank()) list
+        else list.filter {
+            it.firstname.contains(query, ignoreCase = true) ||
+            it.lastname.contains(query, ignoreCase = true)
         }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
 
     init {
         loadAllCandidates()

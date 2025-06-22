@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -152,7 +153,10 @@ class DetailFragment : Fragment() {
     }
 
     fun formatBirthdateWithAge(birthdate: String): String {
-        val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+        val locale = Locale.getDefault()
+        val inputPattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
+        val inputFormatter = DateTimeFormatter.ofPattern(inputPattern, locale)
         val date = LocalDate.parse(birthdate, inputFormatter)
 
         val today = LocalDate.now()

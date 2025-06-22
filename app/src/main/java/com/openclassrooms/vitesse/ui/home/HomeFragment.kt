@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -21,6 +20,7 @@ import com.openclassrooms.vitesse.states.State
 import com.openclassrooms.vitesse.ui.home.CandidateAdapter.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.core.widget.addTextChangedListener
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -44,6 +44,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
         defineRecyclerView()
         observeCandidates()
         setupFab()
+        setupSearchBar()
     }
 
     private fun defineRecyclerView() {
@@ -87,6 +88,17 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 .replace(R.id.container, AddFragment())
                 .addToBackStack(null)
                 .commit()
+        }
+    }
+
+    private fun setupSearchBar() {
+        binding.searchBar.setOnClickListener {
+            binding.searchView.show()
+        }
+
+        binding.searchView.editText.addTextChangedListener { editable ->
+            val query = editable?.toString().orEmpty()
+            viewModel.updateSearchQuery(query)
         }
     }
 
