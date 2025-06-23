@@ -3,7 +3,6 @@ package com.openclassrooms.vitesse.ui.utils
 import android.content.Context
 import android.os.Build
 import android.util.Patterns
-import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.vitesse.R
 import java.text.NumberFormat
@@ -95,6 +94,17 @@ object Utils {
         } catch (e: DateTimeParseException) {
             false
         }
+    }
+
+    fun formatBirthdateForDisplay(date: LocalDate, locale: Locale = Locale.getDefault()): String {
+        val pattern = if (locale.language == "fr") "dd/MM/yyyy" else "MM/dd/yyyy"
+        val formatter = DateTimeFormatter.ofPattern(pattern, locale)
+        return date.format(formatter)
+    }
+
+    fun formatBirthdateForDatabase(date: LocalDate): String {
+        val dbFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        return date.format(dbFormatter)
     }
 
 }

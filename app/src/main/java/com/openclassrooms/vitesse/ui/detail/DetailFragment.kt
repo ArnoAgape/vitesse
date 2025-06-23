@@ -30,11 +30,6 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.vitesse.ui.edit.EditFragment
 import com.openclassrooms.vitesse.ui.utils.Utils
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -53,7 +48,6 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
@@ -86,7 +80,6 @@ class DetailFragment : Fragment() {
         observeCandidate()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeCandidate() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

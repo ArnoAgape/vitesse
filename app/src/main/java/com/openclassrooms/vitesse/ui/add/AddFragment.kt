@@ -2,19 +2,15 @@ package com.openclassrooms.vitesse.ui.add
 
 import android.app.DatePickerDialog
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
-import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.AddScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
@@ -22,9 +18,7 @@ import com.openclassrooms.vitesse.ui.home.HomeFragment
 import com.openclassrooms.vitesse.ui.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -50,7 +44,6 @@ class AddFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupSave()
@@ -61,7 +54,6 @@ class AddFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupSave() {
 
         binding.birthdateEdit.setOnClickListener {
@@ -80,14 +72,14 @@ class AddFragment : Fragment() {
             val newNotes = binding.notesEdit.text.toString()
             val newProfilePicture = selectedImageUri.toString()
 
-            val isFirstNameValid = validateField(newFirstName, binding.firstName)
+            val isFirstNameValid = Utils.validateField(requireContext(), newFirstName, binding.firstName)
 
-            val isLastNameValid = validateField(newLastName, binding.lastName)
+            val isLastNameValid = Utils.validateField(requireContext(), newLastName, binding.lastName)
 
             val isPhoneValid = if (newPhone.isBlank()) {
                 binding.phone.error = getString(R.string.mandatory_field)
                 false
-            } else if (!isPhoneNumberValid(newPhone)) {
+            } else if (!Utils.isPhoneNumberValid(newPhone)) {
                 binding.phone.error = getString(R.string.invalid_format)
                 false
             } else {
@@ -98,7 +90,7 @@ class AddFragment : Fragment() {
             val isEmailValid = if (newEmail.isBlank()) {
                 binding.email.error = getString(R.string.mandatory_field)
                 false
-            } else if (!isEmailValid(newEmail)) {
+            } else if (!Utils.isEmailValid(newEmail)) {
                 binding.email.error = getString(R.string.invalid_format)
                 false
             } else {
@@ -147,26 +139,6 @@ class AddFragment : Fragment() {
         }
     }
 
-    private fun validateField(value: String, inputLayout: TextInputLayout): Boolean {
-        return if (value.isBlank()) {
-            inputLayout.error = getString(R.string.mandatory_field)
-            false
-        } else {
-            inputLayout.error = null
-            true
-        }
-    }
-
-    private fun isEmailValid(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    fun isPhoneNumberValid(phone: String): Boolean {
-        return Patterns.PHONE.matcher(phone).matches()
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -176,17 +148,11 @@ class AddFragment : Fragment() {
         val datePicker =
             DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
-                val locale = Locale.getDefault()
 
-                val pattern = if (locale.language == "fr") "dd/MM/yyyy" else "MM/dd/yyyy"
-                val formatter = DateTimeFormatter.ofPattern(pattern, locale)
-
-                val formattedDate = selectedDate.format(formatter)
+                val formattedDate = Utils.formatBirthdateForDisplay(selectedDate)
                 binding.birthdateEdit.setText(formattedDate)
 
-                val dbFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                val dbFormattedDate = selectedDate.format(dbFormatter)
-
+                val dbFormattedDate = Utils.formatBirthdateForDatabase(selectedDate)
                 viewModel.setBirthdateForDb(dbFormattedDate)
 
             }, year, month, day)

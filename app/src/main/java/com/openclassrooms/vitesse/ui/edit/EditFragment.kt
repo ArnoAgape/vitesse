@@ -2,7 +2,6 @@ package com.openclassrooms.vitesse.ui.edit
 
 import android.app.DatePickerDialog
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -28,9 +26,7 @@ import com.openclassrooms.vitesse.ui.utils.Utils.validateField
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -201,17 +197,11 @@ class EditFragment : Fragment() {
         val datePicker =
             DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
-                val locale = Locale.getDefault()
 
-                val pattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
-                val formatter = DateTimeFormatter.ofPattern(pattern, locale)
-
-                val formattedDate = selectedDate.format(formatter)
+                val formattedDate = Utils.formatBirthdateForDisplay(selectedDate)
                 binding.birthdateEdit.setText(formattedDate)
 
-                val dbFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                val dbFormattedDate = selectedDate.format(dbFormatter)
-
+                val dbFormattedDate = Utils.formatBirthdateForDatabase(selectedDate)
                 viewModel.setBirthdateForDb(dbFormattedDate)
 
             }, year, month, day)
