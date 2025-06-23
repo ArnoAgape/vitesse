@@ -1,8 +1,10 @@
 package com.openclassrooms.vitesse.ui.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
+import com.openclassrooms.vitesse.di.NetworkModule.provideEurConversion
 import com.openclassrooms.vitesse.domain.model.Candidate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +24,17 @@ class DetailViewModel @Inject constructor(
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
 
+    fun getEurConverted() {
+        viewModelScope.launch {
+            try {
+                val resp = provideEurConversion.getEurRates()
+                val gbpRate = resp.eur["gbp"]
+                Log.d("Currency", "1 EUR = $gbpRate GBP")
+            } catch (e: Exception) {
+                Log.e("Currency", "Erreur API : ${e.message}")
+            }
+        }
+    }
 
     fun getCandidateById(id: Long) {
         viewModelScope.launch {
