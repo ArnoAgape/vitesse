@@ -35,7 +35,7 @@ class DetailViewModel @Inject constructor(
                 _gbpFlow.value = gbpRate
                 Log.d("Currency", "1 EUR = $gbpRate GBP")
             } catch (e: Exception) {
-                _errorFlow.value = "Erreur API : ${e.message}"
+                _errorFlow.value = "API Error : ${e.message}"
             }
         }
     }
