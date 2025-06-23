@@ -1,7 +1,6 @@
 package com.openclassrooms.vitesse.data.repository
 
 import com.openclassrooms.vitesse.data.dao.CandidateDao
-import com.openclassrooms.vitesse.data.network.CurrencyApiService
 import com.openclassrooms.vitesse.domain.model.Candidate
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 @Singleton
-class CandidateRepository(private val candidateDao: CandidateDao,
-    private val currencyApiService: CurrencyApiService) {
+class CandidateRepository(private val candidateDao: CandidateDao) {
 
     // Get all candidates
     fun getAllCandidates(): Flow<Result<List<Candidate>>> {

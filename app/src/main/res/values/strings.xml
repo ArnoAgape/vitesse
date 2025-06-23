@@ -17,6 +17,7 @@
     <string name="email">Email</string>
     <string name="date_of_birth">Date of birth</string>
     <string name="expected_salary">Expected salary</string>
+    <string name="expected_salary_pounds">or £ </string>
     <string name="notes">Notes</string>
     <string name="birthday">Birthday</string>
     <string name="profile_picture">Profile picture</string>

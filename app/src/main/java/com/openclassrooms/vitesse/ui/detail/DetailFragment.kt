@@ -31,6 +31,7 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -53,6 +54,7 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
 
+        viewModel.getEurConverted()
         viewModel.getCandidateById(candidateId)
 
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
@@ -93,7 +95,6 @@ class DetailFragment : Fragment() {
                             binding.birthdateEdit.text = formatBirthdateWithAge(candidate.birthdate)
                             binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
-                            binding.salaryConverted.text
                             Glide.with(binding.root.context)
                                 .load(candidate.profilePicture)
                                 .placeholder(R.drawable.ic_profile_pic)
@@ -107,6 +108,13 @@ class DetailFragment : Fragment() {
                     viewModel.errorFlow.collect { errorMessage ->
                         errorMessage?.let {
                             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.gbpFlow.collect { gbpRate ->
+                        gbpRate?.let {
+                            binding.salaryConverted.text = formatExpectedSalaryInPounds(candidate.salary)
                         }
                     }
                 }
@@ -150,6 +158,17 @@ class DetailFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
+    }
+
+    fun formatExpectedSalaryInPounds(salary: Double): String {
+        val gbpRate = viewModel.gbpFlow.value
+        val convertedSalary = (salary*gbpRate!!)
+        val roundedGbpRate = (convertedSalary * 100).roundToInt() / 100.0
+        val expectedSalaryText = getString(R.string.expected_salary_pounds)
+        val formatted = String.format(Locale.getDefault(), "%.2f", roundedGbpRate)
+        val final = expectedSalaryText + formatted
+
+        return final
     }
 
     fun formatBirthdateWithAge(birthdate: String): String {

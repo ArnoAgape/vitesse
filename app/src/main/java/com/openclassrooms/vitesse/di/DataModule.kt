@@ -3,6 +3,7 @@ package com.openclassrooms.vitesse.di
 import com.openclassrooms.vitesse.data.dao.CandidateDao
 import com.openclassrooms.vitesse.data.network.CurrencyApiService
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
+import com.openclassrooms.vitesse.data.repository.CurrencyRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,8 +16,8 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideLoginRepository(candidateDao: CandidateDao, currencyApiService: CurrencyApiService):
-            CandidateRepository {
-        return CandidateRepository(candidateDao, currencyApiService)
+    fun provideCurrencyRepository(currencyApiService: CurrencyApiService):
+            CurrencyRepository {
+        return CurrencyRepository(currencyApiService)
     }
 }

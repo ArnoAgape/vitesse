@@ -1,13 +1,11 @@
 package com.openclassrooms.vitesse.ui.home
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.annotation.GlideModule
 import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.ItemCandidateBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
