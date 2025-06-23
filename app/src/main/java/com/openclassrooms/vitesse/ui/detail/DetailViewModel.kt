@@ -3,13 +3,9 @@ package com.openclassrooms.vitesse.ui.detail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.vitesse.data.network.CurrencyApiService
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.data.repository.CurrencyRepository
-import com.openclassrooms.vitesse.di.NetworkModule.provideEurConversion
 import com.openclassrooms.vitesse.domain.model.Candidate
-import com.openclassrooms.vitesse.domain.model.CurrencyModel
-import com.openclassrooms.vitesse.states.errors.ServerUnavailableException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
