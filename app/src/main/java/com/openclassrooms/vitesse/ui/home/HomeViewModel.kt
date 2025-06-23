@@ -6,6 +6,7 @@ import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.domain.model.Candidate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.openclassrooms.vitesse.states.State
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

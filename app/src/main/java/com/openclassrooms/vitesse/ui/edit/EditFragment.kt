@@ -2,27 +2,33 @@ package com.openclassrooms.vitesse.ui.edit
 
 import android.app.DatePickerDialog
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.EditScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
+import com.openclassrooms.vitesse.ui.utils.Utils
+import com.openclassrooms.vitesse.ui.utils.Utils.isEmailValid
+import com.openclassrooms.vitesse.ui.utils.Utils.isPhoneNumberValid
+import com.openclassrooms.vitesse.ui.utils.Utils.validateField
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 import kotlin.getValue
@@ -79,7 +85,7 @@ class EditFragment : Fragment() {
                             binding.lastNameEdit.setText(it.lastname)
                             binding.phoneEdit.setText(it.phone)
                             binding.emailEdit.setText(it.email)
-                            binding.birthdateEdit.setText(it.birthdate)
+                            binding.birthdateEdit.setText(Utils.formatBirthdateForLocale(it.birthdate))
                             binding.salaryEdit.setText(it.salary.toString())
                             binding.notesEdit.setText(it.notes)
                             Glide.with(binding.root.context)
@@ -113,15 +119,15 @@ class EditFragment : Fragment() {
             val newLastName = binding.lastNameEdit.text.toString()
             val newPhone = binding.phoneEdit.text.toString()
             val newEmail = binding.emailEdit.text.toString()
-            val newBirthdate = binding.birthdateEdit.text.toString()
+            val newBirthdate = viewModel.getBirthdateForDb()
             val newSalaryText = binding.salaryEdit.text.toString()
             val newSalary = newSalaryText.toDoubleOrNull() ?: 0.0
             val newNotes = binding.notesEdit.text.toString()
             val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
 
-            val isFirstNameValid = validateField(newFirstName, binding.firstName)
+            val isFirstNameValid = validateField(requireContext(), newFirstName, binding.firstName)
 
-            val isLastNameValid = validateField(newLastName, binding.lastName)
+            val isLastNameValid = validateField(requireContext(), newLastName, binding.lastName)
 
             val isPhoneValid = if (newPhone.isBlank()) {
                 binding.phone.error = getString(R.string.mandatory_field)
@@ -147,6 +153,9 @@ class EditFragment : Fragment() {
 
             val isBirthdateValid = if (newBirthdate.isBlank()) {
                 binding.birthdate.error = getString(R.string.mandatory_field)
+                false
+            } else if (!Utils.isBirthdateValid(newBirthdate)) {
+                binding.birthdate.error = getString(R.string.invalid_format)
                 false
             } else {
                 binding.birthdate.error = null
@@ -183,25 +192,6 @@ class EditFragment : Fragment() {
         }
     }
 
-    private fun validateField(value: String, inputLayout: TextInputLayout): Boolean {
-        return if (value.isBlank()) {
-            inputLayout.error = getString(R.string.mandatory_field)
-            false
-        } else {
-            inputLayout.error = null
-            true
-        }
-    }
-
-    private fun isEmailValid(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    fun isPhoneNumberValid(phone: String): Boolean {
-        return Patterns.PHONE.matcher(phone).matches()
-    }
-
-
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -210,14 +200,20 @@ class EditFragment : Fragment() {
 
         val datePicker =
             DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = String.format(
-                    Locale.getDefault(),
-                    "%02d/%02d/%04d",
-                    selectedDay,
-                    selectedMonth + 1,
-                    selectedYear
-                )
+                val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
+                val locale = Locale.getDefault()
+
+                val pattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
+                val formatter = DateTimeFormatter.ofPattern(pattern, locale)
+
+                val formattedDate = selectedDate.format(formatter)
                 binding.birthdateEdit.setText(formattedDate)
+
+                val dbFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                val dbFormattedDate = selectedDate.format(dbFormatter)
+
+                viewModel.setBirthdateForDb(dbFormattedDate)
+
             }, year, month, day)
 
         datePicker.show()

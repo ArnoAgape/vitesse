@@ -6,8 +6,8 @@ import jakarta.inject.Inject
 class CurrencyRepository @Inject constructor(
     private val apiService: CurrencyApiService
 ) {
-    suspend fun getEurToGbpRate(): Double? {
-        val response = apiService.getEurRates()
+    suspend fun getEuroToGbpRate(): Double? {
+        val response = apiService.getGbpRate()
         return response.gbp["gbp"]
     }
 

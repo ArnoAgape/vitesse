@@ -31,7 +31,7 @@ class DetailViewModel @Inject constructor(
     fun getEurConverted() {
         viewModelScope.launch {
             try {
-                val gbpRate = currencyRepository.getEurToGbpRate()
+                val gbpRate = currencyRepository.getEuroToGbpRate()
                 _gbpFlow.value = gbpRate
                 Log.d("Currency", "1 EUR = $gbpRate GBP")
             } catch (e: Exception) {

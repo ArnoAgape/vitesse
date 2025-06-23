@@ -33,4 +33,12 @@ class AddViewModel @Inject constructor(
         }
     }
 
+    private var birthdateToStore: String = ""
+
+    fun setBirthdateForDb(date: String) {
+        birthdateToStore = date
+    }
+
+    fun getBirthdateForDb(): String = birthdateToStore
+
 }

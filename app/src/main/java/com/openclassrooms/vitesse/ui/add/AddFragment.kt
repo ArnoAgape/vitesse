@@ -2,6 +2,7 @@ package com.openclassrooms.vitesse.ui.add
 
 import android.app.DatePickerDialog
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputLayout
@@ -17,7 +19,10 @@ import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.AddScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
+import com.openclassrooms.vitesse.ui.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 import kotlin.getValue
@@ -45,6 +50,7 @@ class AddFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupSave()
@@ -55,6 +61,7 @@ class AddFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupSave() {
 
         binding.birthdateEdit.setOnClickListener {
@@ -67,7 +74,7 @@ class AddFragment : Fragment() {
             val newLastName = binding.lastNameEdit.text.toString()
             val newPhone = binding.phoneEdit.text.toString()
             val newEmail = binding.emailEdit.text.toString()
-            val newBirthdate = binding.birthdateEdit.text.toString()
+            val newBirthdate = viewModel.getBirthdateForDb()
             val newSalaryText = binding.salaryEdit.text.toString()
             val newSalary = newSalaryText.toDoubleOrNull() ?: 0.0
             val newNotes = binding.notesEdit.text.toString()
@@ -101,6 +108,9 @@ class AddFragment : Fragment() {
 
             val isBirthdateValid = if (newBirthdate.isBlank()) {
                 binding.birthdate.error = getString(R.string.mandatory_field)
+                false
+            } else if (!Utils.isBirthdateValid(newBirthdate)) {
+                binding.birthdate.error = getString(R.string.invalid_format)
                 false
             } else {
                 binding.birthdate.error = null
@@ -156,6 +166,7 @@ class AddFragment : Fragment() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -164,14 +175,20 @@ class AddFragment : Fragment() {
 
         val datePicker =
             DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = String.format(
-                    Locale.getDefault(),
-                    "%02d/%02d/%04d",
-                    selectedDay,
-                    selectedMonth + 1,
-                    selectedYear
-                )
+                val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
+                val locale = Locale.getDefault()
+
+                val pattern = if (locale.language == "fr") "dd/MM/yyyy" else "MM/dd/yyyy"
+                val formatter = DateTimeFormatter.ofPattern(pattern, locale)
+
+                val formattedDate = selectedDate.format(formatter)
                 binding.birthdateEdit.setText(formattedDate)
+
+                val dbFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                val dbFormattedDate = selectedDate.format(dbFormatter)
+
+                viewModel.setBirthdateForDb(dbFormattedDate)
+
             }, year, month, day)
 
         datePicker.show()

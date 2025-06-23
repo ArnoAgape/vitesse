@@ -1,6 +1,7 @@
 package com.openclassrooms.vitesse.ui.detail
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
@@ -26,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.openclassrooms.vitesse.ui.edit.EditFragment
+import com.openclassrooms.vitesse.ui.utils.Utils
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
@@ -50,6 +53,7 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
@@ -82,6 +86,7 @@ class DetailFragment : Fragment() {
         observeCandidate()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeCandidate() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -92,7 +97,7 @@ class DetailFragment : Fragment() {
                             binding.phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
                             binding.message.setOnClickListener { sendSms(candidate.phone) }
                             binding.email.setOnClickListener { sendEmail(candidate.email) }
-                            binding.birthdateEdit.text = formatBirthdateWithAge(candidate.birthdate)
+                            binding.birthdateEdit.text = Utils.formatBirthdateWithAge(requireContext(), candidate.birthdate)
                             binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
                             Glide.with(binding.root.context)
@@ -114,7 +119,8 @@ class DetailFragment : Fragment() {
                 launch {
                     viewModel.gbpFlow.collect { gbpRate ->
                         gbpRate?.let {
-                            binding.salaryConverted.text = formatExpectedSalaryInPounds(candidate.salary)
+                            binding.salaryConverted.text =
+                                Utils.formatExpectedSalaryInPounds(requireContext(), candidate.salary, gbpRate)
                         }
                     }
                 }
@@ -158,31 +164,6 @@ class DetailFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
-    }
-
-    fun formatExpectedSalaryInPounds(salary: Double): String {
-        val gbpRate = viewModel.gbpFlow.value
-        val convertedSalary = (salary*gbpRate!!)
-        val roundedGbpRate = (convertedSalary * 100).roundToInt() / 100.0
-        val expectedSalaryText = getString(R.string.expected_salary_pounds)
-        val formatted = String.format(Locale.getDefault(), "%.2f", roundedGbpRate)
-        val final = expectedSalaryText + formatted
-
-        return final
-    }
-
-    fun formatBirthdateWithAge(birthdate: String): String {
-
-        val locale = Locale.getDefault()
-        val inputPattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
-        val inputFormatter = DateTimeFormatter.ofPattern(inputPattern, locale)
-        val date = LocalDate.parse(birthdate, inputFormatter)
-
-        val today = LocalDate.now()
-        val age = Period.between(date, today).years
-        val old = getString(R.string.age)
-
-        return "$birthdate (${age} $old)"
     }
 
     private fun dialPhoneNumber(phoneNumber: String) {

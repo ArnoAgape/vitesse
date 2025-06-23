@@ -34,11 +34,18 @@ class EditViewModel @Inject constructor(
         }
     }
 
-
     fun updateCandidate(candidate: Candidate) {
         viewModelScope.launch {
             repository.updateCandidate(candidate)
         }
     }
+
+    private var birthdateToStore: String = ""
+
+    fun setBirthdateForDb(date: String) {
+        birthdateToStore = date
+    }
+
+    fun getBirthdateForDb(): String = birthdateToStore
 
 }
