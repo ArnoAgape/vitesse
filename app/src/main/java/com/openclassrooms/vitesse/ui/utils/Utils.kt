@@ -1,11 +1,10 @@
 package com.openclassrooms.vitesse.ui.utils
 
 import android.content.Context
-import android.os.Build
 import android.util.Patterns
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.vitesse.R
-import java.text.NumberFormat
+import android.icu.text.NumberFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -14,13 +13,9 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 object Utils {
-    fun formatAmountOld(amount: Double, locale: Locale): String {
-        val formatter = NumberFormat.getCurrencyInstance(locale)
-        return formatter.format(amount)
-    }
 
-    fun formatAmountNew(amount: Double, locale: Locale): String {
-        val formatter = android.icu.text.NumberFormat.getCurrencyInstance(locale)
+    fun formatAmount(amount: Double, locale: Locale): String {
+        val formatter = NumberFormat.getCurrencyInstance(locale)
         return formatter.format(amount)
     }
 
@@ -30,11 +25,7 @@ object Utils {
         }
 
         val gbpSuffix = context.getString(R.string.expected_salary_pounds)
-        val formatted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            formatAmountNew(convertedSalary, Locale.UK)
-        } else {
-            formatAmountOld(convertedSalary, Locale.UK)
-        }
+        val formatted = formatAmount(convertedSalary, Locale.UK)
 
         return "$gbpSuffix $formatted"
     }
@@ -64,36 +55,6 @@ object Utils {
         val outputFormatter = DateTimeFormatter.ofPattern(outputPattern, locale)
 
         return date.format(outputFormatter)
-    }
-
-    fun validateField(context: Context, value: String, inputLayout: TextInputLayout): Boolean {
-        return if (value.isBlank()) {
-            inputLayout.error = context.getString(R.string.mandatory_field)
-            false
-        } else {
-            inputLayout.error = null
-            true
-        }
-    }
-
-    fun isEmailValid(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    fun isPhoneNumberValid(phone: String): Boolean {
-        return Patterns.PHONE.matcher(phone).matches()
-    }
-
-    fun isBirthdateValid(birthdate: String): Boolean {
-        return try {
-            val locale = Locale.getDefault()
-            val pattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
-            val formatter = DateTimeFormatter.ofPattern(pattern, locale)
-            LocalDate.parse(birthdate, formatter)
-            true
-        } catch (e: DateTimeParseException) {
-            false
-        }
     }
 
     fun formatBirthdateForDisplay(date: LocalDate, locale: Locale = Locale.getDefault()): String {

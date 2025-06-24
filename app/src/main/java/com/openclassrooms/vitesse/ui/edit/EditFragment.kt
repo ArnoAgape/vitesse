@@ -20,9 +20,7 @@ import com.openclassrooms.vitesse.databinding.EditScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
 import com.openclassrooms.vitesse.ui.utils.Utils
-import com.openclassrooms.vitesse.ui.utils.Utils.isEmailValid
-import com.openclassrooms.vitesse.ui.utils.Utils.isPhoneNumberValid
-import com.openclassrooms.vitesse.ui.utils.Utils.validateField
+import com.openclassrooms.vitesse.ui.utils.Validation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -121,14 +119,14 @@ class EditFragment : Fragment() {
             val newNotes = binding.notesEdit.text.toString()
             val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
 
-            val isFirstNameValid = validateField(requireContext(), newFirstName, binding.firstName)
+            val isFirstNameValid = Validation.validateField(requireContext(), newFirstName, binding.firstName)
 
-            val isLastNameValid = validateField(requireContext(), newLastName, binding.lastName)
+            val isLastNameValid = Validation.validateField(requireContext(), newLastName, binding.lastName)
 
             val isPhoneValid = if (newPhone.isBlank()) {
                 binding.phone.error = getString(R.string.mandatory_field)
                 false
-            } else if (!isPhoneNumberValid(newPhone)) {
+            } else if (!Validation.isPhoneNumberValid(newPhone)) {
                 binding.phone.error = getString(R.string.invalid_format)
                 false
             } else {
@@ -139,7 +137,7 @@ class EditFragment : Fragment() {
             val isEmailValid = if (newEmail.isBlank()) {
                 binding.email.error = getString(R.string.mandatory_field)
                 false
-            } else if (!isEmailValid(newEmail)) {
+            } else if (!Validation.isEmailValid(newEmail)) {
                 binding.email.error = getString(R.string.invalid_format)
                 false
             } else {
@@ -150,7 +148,7 @@ class EditFragment : Fragment() {
             val isBirthdateValid = if (newBirthdate.isBlank()) {
                 binding.birthdate.error = getString(R.string.mandatory_field)
                 false
-            } else if (!Utils.isBirthdateValid(newBirthdate)) {
+            } else if (!Validation.isBirthdateValid(newBirthdate)) {
                 binding.birthdate.error = getString(R.string.invalid_format)
                 false
             } else {

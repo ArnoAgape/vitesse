@@ -16,6 +16,7 @@ import com.openclassrooms.vitesse.databinding.AddScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
 import com.openclassrooms.vitesse.ui.utils.Utils
+import com.openclassrooms.vitesse.ui.utils.Validation
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.util.Calendar
@@ -72,14 +73,14 @@ class AddFragment : Fragment() {
             val newNotes = binding.notesEdit.text.toString()
             val newProfilePicture = selectedImageUri.toString()
 
-            val isFirstNameValid = Utils.validateField(requireContext(), newFirstName, binding.firstName)
+            val isFirstNameValid = Validation.validateField(requireContext(), newFirstName, binding.firstName)
 
-            val isLastNameValid = Utils.validateField(requireContext(), newLastName, binding.lastName)
+            val isLastNameValid = Validation.validateField(requireContext(), newLastName, binding.lastName)
 
             val isPhoneValid = if (newPhone.isBlank()) {
                 binding.phone.error = getString(R.string.mandatory_field)
                 false
-            } else if (!Utils.isPhoneNumberValid(newPhone)) {
+            } else if (!Validation.isPhoneNumberValid(newPhone)) {
                 binding.phone.error = getString(R.string.invalid_format)
                 false
             } else {
@@ -90,7 +91,7 @@ class AddFragment : Fragment() {
             val isEmailValid = if (newEmail.isBlank()) {
                 binding.email.error = getString(R.string.mandatory_field)
                 false
-            } else if (!Utils.isEmailValid(newEmail)) {
+            } else if (!Validation.isEmailValid(newEmail)) {
                 binding.email.error = getString(R.string.invalid_format)
                 false
             } else {
@@ -101,7 +102,7 @@ class AddFragment : Fragment() {
             val isBirthdateValid = if (newBirthdate.isBlank()) {
                 binding.birthdate.error = getString(R.string.mandatory_field)
                 false
-            } else if (!Utils.isBirthdateValid(newBirthdate)) {
+            } else if (!Validation.isBirthdateValid(newBirthdate)) {
                 binding.birthdate.error = getString(R.string.invalid_format)
                 false
             } else {

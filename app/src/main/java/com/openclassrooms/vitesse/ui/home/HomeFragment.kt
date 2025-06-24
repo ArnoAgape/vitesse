@@ -44,7 +44,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
         defineRecyclerView()
         observeCandidates()
         setupFab()
-        setupSearchBar()
     }
 
     private fun defineRecyclerView() {
@@ -91,16 +90,16 @@ class HomeFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    private fun setupSearchBar() {
+    /*private fun setupSearchBar() {
         binding.searchBar.setOnClickListener {
-            binding.searchView.show()
+            binding.searchView
         }
 
         binding.searchView.editText.addTextChangedListener { editable ->
             val query = editable?.toString().orEmpty()
             viewModel.updateSearchQuery(query)
         }
-    }
+    }*/
 
     override fun onItemClick(item: Candidate) {
         item.id?.let { id ->
