@@ -12,7 +12,7 @@ data class Candidate(
     val salary: Int,
     val notes: String,
     val profilePicture: String,
-    val isFavorite: Boolean = false
+    var isFavorite: Boolean = false
 ) {
 
     fun toDto(): CandidateDto {

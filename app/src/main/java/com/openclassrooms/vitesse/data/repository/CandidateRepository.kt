@@ -86,4 +86,16 @@ class CandidateRepository(private val candidateDao: CandidateDao) {
             }
         }
     }
+
+    // Edit isFavorite from a candidate
+    suspend fun updateFavorite(id: Long, isFavorite: Boolean): Result<Unit> {
+        return withContext(Dispatchers.IO) {
+            try {
+                candidateDao.updateFavorite(id, isFavorite)
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
 }

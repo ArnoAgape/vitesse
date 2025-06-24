@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
+    private var isFavorite: Boolean = false
     private var candidateId: Long = -1L
     private lateinit var candidate: Candidate
     private lateinit var binding: DetailScreenBinding
@@ -50,25 +51,22 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
 
-        viewModel.getEurConverted()
+        viewModel.getEuroConverted()
         viewModel.getCandidateById(candidateId)
-
-        var isFavorite = false
 
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.edit_candidate, menu)
-                val icon = if (candidate.isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
-                menu.findItem(R.id.favorite).setIcon(icon)
+                val starItem = menu.findItem(R.id.favorite)
+                updateStarIcon(starItem)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.favorite -> {
                         isFavorite = !isFavorite
-                        val iconRes =
-                            if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
-                        menuItem.setIcon(iconRes)
+                        updateStarIcon(menuItem)
+                        viewModel.toggleFavorite(candidateId, isFavorite)
                         true
                     }
 
@@ -111,6 +109,9 @@ class DetailFragment : Fragment() {
                                 .error(R.drawable.ic_profile_pic)
                                 .into(binding.profilePicture)
                             setupToolbar(candidate)
+                            isFavorite = candidate.isFavorite
+                            candidateId = candidate.id!!
+                            requireActivity().invalidateOptionsMenu()
                         }
                     }
                 }
@@ -153,6 +154,11 @@ class DetailFragment : Fragment() {
             }
             .create()
             .show()
+    }
+
+    private fun updateStarIcon(item: MenuItem) {
+        val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+        item.setIcon(iconRes)
     }
 
     private fun setupEditButton() {

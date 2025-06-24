@@ -28,7 +28,7 @@ class DetailViewModel @Inject constructor(
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
 
-    fun getEurConverted() {
+    fun getEuroConverted() {
         viewModelScope.launch {
             try {
                 val gbpRate = currencyRepository.getEuroToGbpRate()
@@ -57,5 +57,12 @@ class DetailViewModel @Inject constructor(
             repository.deleteCandidate(candidate)
         }
     }
+
+    fun toggleFavorite(id: Long, isFavorite: Boolean) {
+        viewModelScope.launch {
+            repository.updateFavorite(id, isFavorite)
+        }
+    }
+
 
 }
