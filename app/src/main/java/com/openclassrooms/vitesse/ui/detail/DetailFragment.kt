@@ -53,6 +53,8 @@ class DetailFragment : Fragment() {
         viewModel.getEurConverted()
         viewModel.getCandidateById(candidateId)
 
+        var isFavorite = false
+
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.edit_candidate, menu)
@@ -60,6 +62,13 @@ class DetailFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
+                    R.id.favorite -> {
+                        isFavorite = !isFavorite
+                        val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+                        menuItem.setIcon(iconRes)
+                        true
+                    }
+
                     R.id.edit -> {
                         setupEditButton()
                         true
@@ -155,6 +164,10 @@ class DetailFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
+    }
+
+    private fun setupFavoriteButton() {
+        R.drawable.ic_star_filled
     }
 
     private fun dialPhoneNumber(phoneNumber: String) {
