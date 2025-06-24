@@ -67,7 +67,7 @@ abstract class AppDatabase : RoomDatabase() {
                     phone = "+33 6 19 35 40 58",
                     email = "jdoe@mail.fr",
                     birthdate = "09/12/1993",
-                    salary = 2000.0,
+                    salary = 2000,
                     notes = "Very good candidate",
                     profilePicture = "",
                     isFavorite = false
@@ -81,7 +81,7 @@ abstract class AppDatabase : RoomDatabase() {
                     phone = "+33 6 16 44 32 24",
                     email = "mdupond@mail.fr",
                     birthdate = "26/05/2000",
-                    salary = 2450.0,
+                    salary = 2450,
                     notes = "May hire him",
                     profilePicture = "",
                     isFavorite = false

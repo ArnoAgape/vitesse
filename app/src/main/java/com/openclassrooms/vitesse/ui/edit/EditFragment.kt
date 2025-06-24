@@ -109,15 +109,15 @@ class EditFragment : Fragment() {
 
         binding.saveButton.setOnClickListener {
 
-            val newFirstName = binding.firstNameEdit.text.toString()
-            val newLastName = binding.lastNameEdit.text.toString()
-            val newPhone = binding.phoneEdit.text.toString()
-            val newEmail = binding.emailEdit.text.toString()
+            val newFirstName = binding.firstNameEdit.text.toString().trim()
+            val newLastName = binding.lastNameEdit.text.toString().trim()
+            val newPhone = binding.phoneEdit.text.toString().trim()
+            val newEmail = binding.emailEdit.text.toString().trim()
             val newBirthdate = binding.birthdateEdit.text?.toString()?.takeIf { it.isNotBlank() }
                 ?: candidate.birthdate
-            val newSalaryText = binding.salaryEdit.text.toString()
+            val newSalaryText = binding.salaryEdit.text.toString().trim()
             val newSalary = newSalaryText.toIntOrNull() ?: 0
-            val newNotes = binding.notesEdit.text.toString()
+            val newNotes = binding.notesEdit.text.toString().trim()
             val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
 
             val isFirstNameValid = Validation.validateField(requireContext(), newFirstName, binding.firstName)
