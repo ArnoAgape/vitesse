@@ -24,7 +24,6 @@ class HomeViewModel @Inject constructor(
     private val _allCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
 
     private val _favoriteCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
-    val showFavorites = MutableStateFlow(false)
 
     private val searchQuery = MutableStateFlow("")
 
@@ -41,6 +40,20 @@ class HomeViewModel @Inject constructor(
             it.lastname.contains(query, ignoreCase = true)
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val selectedTab = MutableStateFlow("all")
+    val currentTab = MutableStateFlow(0)
+
+    val displayedAllCandidatesFlow = combine(_allCandidatesFlow, selectedTab) { list, tab ->
+        when (tab) {
+            "favorites" -> list.filter { it.isFavorite }
+            else -> list
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun selectTab(tabKey: String) {
+        selectedTab.value = tabKey
+    }
 
     fun onSearchChange(query: String) {
         searchQuery.value = query
@@ -83,10 +96,6 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun toggleFavorites(show: Boolean) {
-        showFavorites.value = show
     }
 
 }

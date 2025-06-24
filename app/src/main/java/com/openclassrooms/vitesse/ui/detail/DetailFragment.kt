@@ -58,13 +58,16 @@ class DetailFragment : Fragment() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.edit_candidate, menu)
+                val icon = if (candidate.isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+                menu.findItem(R.id.favorite).setIcon(icon)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.favorite -> {
                         isFavorite = !isFavorite
-                        val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+                        val iconRes =
+                            if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
                         menuItem.setIcon(iconRes)
                         true
                     }
@@ -97,8 +100,10 @@ class DetailFragment : Fragment() {
                             binding.phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
                             binding.message.setOnClickListener { sendSms(candidate.phone) }
                             binding.email.setOnClickListener { sendEmail(candidate.email) }
-                            binding.birthdateEdit.text = Format.formatBirthdateWithAge(requireContext(), candidate.birthdate)
-                            binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
+                            binding.birthdateEdit.text =
+                                Format.formatBirthdateWithAge(requireContext(), candidate.birthdate)
+                            binding.salaryEdit.text =
+                                String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
                             Glide.with(binding.root.context)
                                 .load(candidate.profilePicture)
@@ -120,7 +125,11 @@ class DetailFragment : Fragment() {
                     viewModel.gbpFlow.collect { gbpRate ->
                         gbpRate?.let {
                             binding.salaryConverted.text =
-                                Format.formatExpectedSalaryInPounds(requireContext(), candidate.salary, gbpRate)
+                                Format.formatExpectedSalaryInPounds(
+                                    requireContext(),
+                                    candidate.salary,
+                                    gbpRate
+                                )
                         }
                     }
                 }
@@ -164,10 +173,6 @@ class DetailFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
-    }
-
-    private fun setupFavoriteButton() {
-        R.drawable.ic_star_filled
     }
 
     private fun dialPhoneNumber(phoneNumber: String) {

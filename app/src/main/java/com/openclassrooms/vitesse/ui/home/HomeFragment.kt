@@ -21,7 +21,7 @@ import com.openclassrooms.vitesse.states.State
 import com.openclassrooms.vitesse.ui.home.CandidateAdapter.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import androidx.core.widget.addTextChangedListener
+import com.google.android.material.tabs.TabLayout
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -46,6 +46,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
         observeCandidates()
         setupFab()
         setupSearchBar()
+        setupTabs()
     }
 
     private fun defineRecyclerView() {
@@ -69,7 +70,11 @@ class HomeFragment : Fragment(), OnItemClickListener {
                         binding.noCandidate.visibility =
                             if (list.isEmpty()) View.VISIBLE else View.INVISIBLE
                     }
-
+                }
+                launch {
+                    viewModel.displayedAllCandidatesFlow.collect { list ->
+                        candidateAdapter.submitList(list)
+                    }
                 }
                 launch {
                     viewModel.errorFlow.collect { errorMessage ->
@@ -90,6 +95,24 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    private fun setupTabs() {
+        binding.tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewModel.currentTab.value = tab.position
+                viewModel.selectTab(if(tab.position == 0) "all" else "favorites")
+                when (tab.position) {
+                    0 -> viewModel.selectTab("all")
+                    1 -> viewModel.selectTab("favorites")
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+        binding.tab.getTabAt(viewModel.currentTab.value)?.select()
+
     }
 
     private fun setupSearchBar() {

@@ -84,7 +84,7 @@ abstract class AppDatabase : RoomDatabase() {
                     salary = 2450,
                     notes = "May hire him",
                     profilePicture = "",
-                    isFavorite = false
+                    isFavorite = true
                 )
             )
         }
