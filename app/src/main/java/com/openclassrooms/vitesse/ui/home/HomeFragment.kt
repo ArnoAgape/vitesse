@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -44,6 +45,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
         defineRecyclerView()
         observeCandidates()
         setupFab()
+        setupSearchBar()
     }
 
     private fun defineRecyclerView() {
@@ -90,16 +92,18 @@ class HomeFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    /*private fun setupSearchBar() {
-        binding.searchBar.setOnClickListener {
-            binding.searchView
-        }
+    private fun setupSearchBar() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
-        binding.searchView.editText.addTextChangedListener { editable ->
-            val query = editable?.toString().orEmpty()
-            viewModel.updateSearchQuery(query)
-        }
-    }*/
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onSearchChange(newText.orEmpty())
+                return true
+            }
+        })
+    }
 
     override fun onItemClick(item: Candidate) {
         item.id?.let { id ->

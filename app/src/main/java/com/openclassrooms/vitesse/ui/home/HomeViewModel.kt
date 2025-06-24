@@ -26,8 +26,7 @@ class HomeViewModel @Inject constructor(
     private val _favoriteCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
     val showFavorites = MutableStateFlow(false)
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery
+    private val searchQuery = MutableStateFlow("")
 
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
@@ -35,7 +34,7 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUIState())
     val uiState: StateFlow<HomeUIState> = _uiState.asStateFlow()
 
-    val displayedCandidatesFlow = combine(_allCandidatesFlow, _searchQuery) { list, query ->
+    val displayedCandidatesFlow = combine(_allCandidatesFlow, searchQuery) { list, query ->
         if (query.isBlank()) list
         else list.filter {
             it.firstname.contains(query, ignoreCase = true) ||
@@ -43,11 +42,16 @@ class HomeViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
+    fun onSearchChange(query: String) {
+        searchQuery.value = query
     }
 
     init {
+        viewModelScope.launch {
+            repository.getAllCandidates().collect { result ->
+                result.onSuccess { _allCandidatesFlow.value = it }
+            }
+        }
         loadAllCandidates()
         loadAllFavoriteCandidates()
     }
