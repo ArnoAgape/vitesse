@@ -116,7 +116,7 @@ class EditFragment : Fragment() {
             val newBirthdate = binding.birthdateEdit.text?.toString()?.takeIf { it.isNotBlank() }
                 ?: candidate.birthdate
             val newSalaryText = binding.salaryEdit.text.toString()
-            val newSalary = newSalaryText.toDoubleOrNull() ?: 0.0
+            val newSalary = newSalaryText.toIntOrNull() ?: 0
             val newNotes = binding.notesEdit.text.toString()
             val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
 

@@ -27,7 +27,7 @@ data class CandidateDto(
     val birthdate: String,
 
     @ColumnInfo(name = "salary")
-    val salary: Double,
+    val salary: Int,
 
     @ColumnInfo(name = "notes")
     val notes: String,

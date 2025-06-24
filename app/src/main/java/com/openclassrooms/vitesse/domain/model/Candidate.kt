@@ -9,7 +9,7 @@ data class Candidate(
     val phone: String,
     val email: String,
     val birthdate: String,
-    val salary: Double,
+    val salary: Int,
     val notes: String,
     val profilePicture: String,
     val isFavorite: Boolean = false

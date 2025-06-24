@@ -16,7 +16,7 @@ object Format {
         return formatter.format(amount)
     }
 
-    fun formatExpectedSalaryInPounds(context: Context, salary: Double, gbpRate: Double): String {
+    fun formatExpectedSalaryInPounds(context: Context, salary: Int, gbpRate: Double): String {
         val convertedSalary = (salary * gbpRate).let {
             (it * 100).roundToInt() / 100.0
         }
