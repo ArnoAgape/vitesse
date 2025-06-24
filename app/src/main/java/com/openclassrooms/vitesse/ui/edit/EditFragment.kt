@@ -19,7 +19,7 @@ import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.EditScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
-import com.openclassrooms.vitesse.ui.utils.Utils
+import com.openclassrooms.vitesse.ui.utils.Format
 import com.openclassrooms.vitesse.ui.utils.Validation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -79,7 +79,7 @@ class EditFragment : Fragment() {
                             binding.lastNameEdit.setText(it.lastname)
                             binding.phoneEdit.setText(it.phone)
                             binding.emailEdit.setText(it.email)
-                            binding.birthdateEdit.setText(Utils.formatBirthdateForLocale(it.birthdate))
+                            binding.birthdateEdit.setText(Format.formatBirthdateForLocale(it.birthdate))
                             binding.salaryEdit.setText(it.salary.toString())
                             binding.notesEdit.setText(it.notes)
                             Glide.with(binding.root.context)
@@ -196,10 +196,10 @@ class EditFragment : Fragment() {
             DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
 
-                val formattedDate = Utils.formatBirthdateForDisplay(selectedDate)
+                val formattedDate = Format.formatBirthdateForDisplay(selectedDate)
                 binding.birthdateEdit.setText(formattedDate)
 
-                val dbFormattedDate = Utils.formatBirthdateForDatabase(selectedDate)
+                val dbFormattedDate = Format.formatBirthdateForDatabase(selectedDate)
                 viewModel.setBirthdateForDb(dbFormattedDate)
 
             }, year, month, day)

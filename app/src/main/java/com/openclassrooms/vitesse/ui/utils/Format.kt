@@ -1,18 +1,15 @@
 package com.openclassrooms.vitesse.ui.utils
 
 import android.content.Context
-import android.util.Patterns
-import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.vitesse.R
 import android.icu.text.NumberFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.util.Locale
 import kotlin.math.roundToInt
 
-object Utils {
+object Format {
 
     fun formatAmount(amount: Double, locale: Locale): String {
         val formatter = NumberFormat.getCurrencyInstance(locale)

@@ -26,7 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.openclassrooms.vitesse.ui.edit.EditFragment
-import com.openclassrooms.vitesse.ui.utils.Utils
+import com.openclassrooms.vitesse.ui.utils.Format
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -88,7 +88,7 @@ class DetailFragment : Fragment() {
                             binding.phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
                             binding.message.setOnClickListener { sendSms(candidate.phone) }
                             binding.email.setOnClickListener { sendEmail(candidate.email) }
-                            binding.birthdateEdit.text = Utils.formatBirthdateWithAge(requireContext(), candidate.birthdate)
+                            binding.birthdateEdit.text = Format.formatBirthdateWithAge(requireContext(), candidate.birthdate)
                             binding.salaryEdit.text = String.format("%s €", candidate.salary.toString())
                             binding.notesEdit.text = candidate.notes
                             Glide.with(binding.root.context)
@@ -111,7 +111,7 @@ class DetailFragment : Fragment() {
                     viewModel.gbpFlow.collect { gbpRate ->
                         gbpRate?.let {
                             binding.salaryConverted.text =
-                                Utils.formatExpectedSalaryInPounds(requireContext(), candidate.salary, gbpRate)
+                                Format.formatExpectedSalaryInPounds(requireContext(), candidate.salary, gbpRate)
                         }
                     }
                 }

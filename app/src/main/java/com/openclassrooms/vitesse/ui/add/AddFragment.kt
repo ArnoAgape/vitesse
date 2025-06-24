@@ -15,7 +15,7 @@ import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.AddScreenBinding
 import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
-import com.openclassrooms.vitesse.ui.utils.Utils
+import com.openclassrooms.vitesse.ui.utils.Format
 import com.openclassrooms.vitesse.ui.utils.Validation
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -150,10 +150,10 @@ class AddFragment : Fragment() {
             DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
 
-                val formattedDate = Utils.formatBirthdateForDisplay(selectedDate)
+                val formattedDate = Format.formatBirthdateForDisplay(selectedDate)
                 binding.birthdateEdit.setText(formattedDate)
 
-                val dbFormattedDate = Utils.formatBirthdateForDatabase(selectedDate)
+                val dbFormattedDate = Format.formatBirthdateForDatabase(selectedDate)
                 viewModel.setBirthdateForDb(dbFormattedDate)
 
             }, year, month, day)
