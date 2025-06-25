@@ -306,7 +306,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:gravity="top|start"
-                    android:minLines="10"/>
+                    android:minLines="8"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
