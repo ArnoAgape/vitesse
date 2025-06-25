@@ -172,11 +172,8 @@ class EditFragment : Fragment() {
                 newProfilePicture
             )
             viewModel.updateCandidate(updatedCandidate)
-            parentFragmentManager
-                .beginTransaction()
-                .replace(R.id.container, HomeFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
+
             Toast.makeText(context, R.string.edited, Toast.LENGTH_SHORT).show()
         }
     }
@@ -204,6 +201,8 @@ class EditFragment : Fragment() {
                 viewModel.setBirthdateForDb(dbFormattedDate)
 
             }, year, month, day)
+
+        datePicker.datePicker.maxDate = System.currentTimeMillis()
 
         datePicker.show()
     }

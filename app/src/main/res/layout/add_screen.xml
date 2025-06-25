@@ -313,7 +313,7 @@
                     android:id="@+id/notesEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textMultiLine|textCapWords"
+                    android:inputType="textMultiLine"
                     android:gravity="top|start"
                     android:minLines="5"/>
 

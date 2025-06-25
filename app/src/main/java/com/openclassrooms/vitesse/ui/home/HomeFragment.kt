@@ -100,12 +100,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
     private fun setupTabs() {
         binding.tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                viewModel.currentTab.value = tab.position
-                viewModel.selectTab(if(tab.position == 0) "all" else "favorites")
-                when (tab.position) {
-                    0 -> viewModel.selectTab("all")
-                    1 -> viewModel.selectTab("favorites")
-                }
+                viewModel.toggleFavorites(tab.position == 1)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}

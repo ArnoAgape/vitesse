@@ -158,6 +158,8 @@ class AddFragment : Fragment() {
 
             }, year, month, day)
 
+        datePicker.datePicker.maxDate = System.currentTimeMillis()
+
         datePicker.show()
     }
 
