@@ -35,10 +35,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
-    // ----------------------------
-    // Properties
-    // ----------------------------
-
     private var isFavorite: Boolean = false
     private var candidateId: Long = -1L
     private lateinit var candidate: Candidate
@@ -46,9 +42,10 @@ class DetailFragment : Fragment() {
 
     private val viewModel: DetailViewModel by viewModels()
 
-    // ----------------------------
-    // Lifecycle
-    // ----------------------------
+    override fun onResume() {
+        super.onResume()
+        candidateId.let { viewModel.getCandidateById(it) }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,10 +67,6 @@ class DetailFragment : Fragment() {
         setupMenu()
         observeViewModel()
     }
-
-    // ----------------------------
-    // Menu
-    // ----------------------------
 
     /**
      * Sets up the top app bar menu with favorite, edit, and delete actions.
@@ -115,10 +108,6 @@ class DetailFragment : Fragment() {
             }
         }
     }
-
-    // ----------------------------
-    // Observers
-    // ----------------------------
 
     /**
      * Observes UI flows from the ViewModel.
@@ -166,10 +155,6 @@ class DetailFragment : Fragment() {
         }
     }
 
-    // ----------------------------
-    // UI Binding
-    // ----------------------------
-
     /**
      * Populates the screen with candidate data.
      */
@@ -201,10 +186,6 @@ class DetailFragment : Fragment() {
         }
     }
 
-    // ----------------------------
-    // Navigation & Actions
-    // ----------------------------
-
     /**
      * Navigates to the EditFragment with current candidate ID.
      */
@@ -233,10 +214,6 @@ class DetailFragment : Fragment() {
             .create()
             .show()
     }
-
-    // ----------------------------
-    // Helpers
-    // ----------------------------
 
     private fun updateStarIcon(item: MenuItem) {
         val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
@@ -278,10 +255,6 @@ class DetailFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.no_email, Toast.LENGTH_SHORT).show()
         }
     }
-
-    // ----------------------------
-    // Companion
-    // ----------------------------
 
     companion object {
         private const val ARG_CANDIDATE_ID = "candidate_id"

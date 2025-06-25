@@ -18,7 +18,7 @@ mockk = "1.14.4"
 moshi = "1.15.2"
 recyclerview = "1.4.0"
 retrofit = "3.0.0"
-ksp = "2.1.21-2.0.1"
+ksp = "2.2.0-2.0.2"
 room = "2.7.2"
 turbine = "1.2.1"
 

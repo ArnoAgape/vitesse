@@ -8,11 +8,13 @@ plugins {
 
 android {
     namespace = "com.openclassrooms.vitesse"
+    //noinspection GradleDependency
     compileSdk = 35
 
     defaultConfig {
         applicationId = "com.openclassrooms.vitesse"
         minSdk = 26
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
