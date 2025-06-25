@@ -26,6 +26,7 @@
     <string name="save">Save</string>
     <string name="mandatory_field">Mandatory field</string>
     <string name="invalid_format">Invalid format</string>
+    <string name="error_loading_candidates">Error while loading the candidates</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="deletion">Deletion</string>

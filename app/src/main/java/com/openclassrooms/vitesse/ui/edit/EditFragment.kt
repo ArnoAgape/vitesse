@@ -27,19 +27,28 @@ import java.time.LocalDate
 import java.util.Calendar
 import kotlin.getValue
 
+/**
+ * Fragment responsible for editing an existing candidate.
+ * Allows the user to update all candidate details including the profile picture.
+ */
 @AndroidEntryPoint
 class EditFragment : Fragment() {
 
-    private var candidateId: Long = -1L
-    private lateinit var candidate: Candidate
     private lateinit var binding: EditScreenBinding
     private val viewModel: EditViewModel by viewModels()
 
+    private var candidateId: Long = -1L
+    private lateinit var candidate: Candidate
+
     private var selectedImageUri: Uri? = null
+
+    /**
+     * Registers the image picker to select a new profile picture.
+     */
     val pickMedia = registerForActivityResult(PickVisualMedia()) { uri ->
-        if (uri != null) {
-            selectedImageUri = uri
-            binding.profilePictureEdit.setImageURI(uri)
+        uri?.let {
+            selectedImageUri = it
+            binding.profilePictureEdit.setImageURI(it)
         }
     }
 
@@ -54,170 +63,228 @@ class EditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        candidateId = requireArguments().getLong("candidate_id")
+        candidateId = requireArguments().getLong(ARG_CANDIDATE_ID)
 
-        val candidateId = requireArguments().getLong("candidate_id")
         viewModel.getCandidateById(candidateId)
 
+        setupListeners()
+        setupSave()
+        setupToolbar()
+        observeCandidate()
+        observeErrors()
+    }
+
+    /**
+     * Sets up listeners for views, including image and birthdate pickers.
+     */
+    private fun setupListeners() {
         binding.profilePictureEdit.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
         }
 
-        setupSave()
-        setupToolbar()
-        observeCandidate()
+        binding.birthdateEdit.setOnClickListener {
+            showDatePicker()
+        }
     }
 
-    private fun observeCandidate() {
+    /**
+     * Observes potential errors and displays them as toasts.
+     */
+    private fun observeErrors() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.candidateFlow.collect { candidateResult ->
-                        candidateResult?.let {
-                            candidate = it
-                            binding.firstNameEdit.setText(it.firstname)
-                            binding.lastNameEdit.setText(it.lastname)
-                            binding.phoneEdit.setText(it.phone)
-                            binding.emailEdit.setText(it.email)
-                            binding.birthdateEdit.setText(Format.formatBirthdateForLocale(it.birthdate))
-                            binding.salaryEdit.setText(it.salary.toString())
-                            binding.notesEdit.setText(it.notes)
-                            Glide.with(binding.root.context)
-                                .load(it.profilePicture)
-                                .placeholder(R.drawable.ic_profile_pic)
-                                .error(R.drawable.ic_profile_pic)
-                                .into(binding.profilePictureEdit)
-                        }
-                    }
-                }
-                launch {
-                    viewModel.errorFlow.collect { errorMessage ->
-                        errorMessage?.let {
-                            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        }
+                viewModel.errorFlow.collect { errorMessage ->
+                    errorMessage?.let {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                     }
                 }
             }
         }
     }
 
-    private fun setupSave() {
-
-        binding.birthdateEdit.setOnClickListener {
-            showDatePicker()
+    /**
+     * Observes the candidate data and updates the UI accordingly.
+     */
+    private fun observeCandidate() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.candidateFlow.collect { candidateResult ->
+                    candidateResult?.let {
+                        candidate = it
+                        binding.firstNameEdit.setText(it.firstname)
+                        binding.lastNameEdit.setText(it.lastname)
+                        binding.phoneEdit.setText(it.phone)
+                        binding.emailEdit.setText(it.email)
+                        binding.birthdateEdit.setText(Format.formatBirthdateForLocale(it.birthdate))
+                        binding.salaryEdit.setText(it.salary.toString())
+                        binding.notesEdit.setText(it.notes)
+                        Glide.with(binding.root.context)
+                            .load(it.profilePicture)
+                            .placeholder(R.drawable.ic_profile_pic)
+                            .error(R.drawable.ic_profile_pic)
+                            .into(binding.profilePictureEdit)
+                    }
+                }
+            }
         }
+    }
 
+    /**
+     * Sets up the Save button logic, including form validation and data submission.
+     */
+    private fun setupSave() {
         binding.saveButton.setOnClickListener {
-
             val newFirstName = binding.firstNameEdit.text.toString().trim()
             val newLastName = binding.lastNameEdit.text.toString().trim()
             val newPhone = binding.phoneEdit.text.toString().trim()
             val newEmail = binding.emailEdit.text.toString().trim()
-            val newBirthdate = binding.birthdateEdit.text?.toString()?.takeIf { it.isNotBlank() }
-                ?: candidate.birthdate
-            val newSalaryText = binding.salaryEdit.text.toString().trim()
-            val newSalary = newSalaryText.toIntOrNull() ?: 0
+            val newBirthdate = viewModel.getBirthdateForDb().takeIf {
+                it.isNotBlank() } ?: candidate.birthdate
+            val newSalary = binding.salaryEdit.text.toString().trim().toIntOrNull() ?: 0
             val newNotes = binding.notesEdit.text.toString().trim()
             val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
 
-            val isFirstNameValid = Validation.validateField(requireContext(), newFirstName, binding.firstName)
-
-            val isLastNameValid = Validation.validateField(requireContext(), newLastName, binding.lastName)
-
-            val isPhoneValid = if (newPhone.isBlank()) {
-                binding.phone.error = getString(R.string.mandatory_field)
-                false
-            } else if (!Validation.isPhoneNumberValid(newPhone)) {
-                binding.phone.error = getString(R.string.invalid_format)
-                false
-            } else {
-                binding.phone.error = null
-                true
-            }
-
-            val isEmailValid = if (newEmail.isBlank()) {
-                binding.email.error = getString(R.string.mandatory_field)
-                false
-            } else if (!Validation.isEmailValid(newEmail)) {
-                binding.email.error = getString(R.string.invalid_format)
-                false
-            } else {
-                binding.email.error = null
-                true
-            }
-
-            val isBirthdateValid = if (newBirthdate.isBlank()) {
-                binding.birthdate.error = getString(R.string.mandatory_field)
-                false
-            } else if (!Validation.isBirthdateValid(newBirthdate)) {
-                binding.birthdate.error = getString(R.string.invalid_format)
-                false
-            } else {
-                binding.birthdate.error = null
-                true
-            }
+            val isFirstNameValid =
+                Validation.validateField(requireContext(), newFirstName, binding.firstName)
+            val isLastNameValid =
+                Validation.validateField(requireContext(), newLastName, binding.lastName)
+            val isPhoneValid = validatePhone(newPhone)
+            val isEmailValid = validateEmail(newEmail)
+            val isBirthdateValid = validateBirthdate(newBirthdate)
 
             if (!isFirstNameValid || !isLastNameValid || !isPhoneValid || !isEmailValid || !isBirthdateValid)
                 return@setOnClickListener
 
             val updatedCandidate = Candidate(
-                candidateId,
-                newFirstName,
-                newLastName,
-                newPhone,
-                newEmail,
-                newBirthdate,
-                newSalary,
-                newNotes,
-                newProfilePicture
+                id = candidateId,
+                firstname = newFirstName,
+                lastname = newLastName,
+                phone = newPhone,
+                email = newEmail,
+                birthdate = newBirthdate,
+                salary = newSalary,
+                notes = newNotes,
+                profilePicture = newProfilePicture,
+                isFavorite = candidate.isFavorite
             )
+
             viewModel.updateCandidate(updatedCandidate)
-            parentFragmentManager.popBackStack()
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, HomeFragment())
+                .addToBackStack(null)
+                .commit()
 
             Toast.makeText(context, R.string.edited, Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
+    /**
+     * Validates the phone number input.
+     */
+    private fun validatePhone(phone: String): Boolean {
+        return when {
+            phone.isBlank() -> {
+                binding.phone.error = getString(R.string.mandatory_field)
+                false
+            }
+
+            !Validation.isPhoneNumberValid(phone) -> {
+                binding.phone.error = getString(R.string.invalid_format)
+                false
+            }
+
+            else -> {
+                binding.phone.error = null
+                true
+            }
         }
     }
 
+    /**
+     * Validates the email input.
+     */
+    private fun validateEmail(email: String): Boolean {
+        return when {
+            email.isBlank() -> {
+                binding.email.error = getString(R.string.mandatory_field)
+                false
+            }
+
+            !Validation.isEmailValid(email) -> {
+                binding.email.error = getString(R.string.invalid_format)
+                false
+            }
+
+            else -> {
+                binding.email.error = null
+                true
+            }
+        }
+    }
+
+    /**
+     * Validates the birthdate input.
+     */
+    private fun validateBirthdate(birthdate: String): Boolean {
+        return when {
+            birthdate.isBlank() -> {
+                binding.birthdate.error = getString(R.string.mandatory_field)
+                false
+            }
+
+            !Validation.isBirthdateValid(birthdate) -> {
+                binding.birthdate.error = getString(R.string.invalid_format)
+                false
+            }
+
+            else -> {
+                binding.birthdate.error = null
+                true
+            }
+        }
+    }
+
+    /**
+     * Displays a DatePickerDialog to select a birthdate.
+     */
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePicker =
-            DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
-
-                val formattedDate = Format.formatBirthdateForDisplay(selectedDate)
-                binding.birthdateEdit.setText(formattedDate)
-
-                val dbFormattedDate = Format.formatBirthdateForDatabase(selectedDate)
-                viewModel.setBirthdateForDb(dbFormattedDate)
-
-            }, year, month, day)
+        val datePicker = DatePickerDialog(requireContext(), { _, y, m, d ->
+            val selectedDate = LocalDate.of(y, m + 1, d)
+            binding.birthdateEdit.setText(Format.formatBirthdateForDisplay(selectedDate))
+            viewModel.setBirthdateForDb(Format.formatBirthdateForDatabase(selectedDate))
+        }, year, month, day)
 
         datePicker.datePicker.maxDate = System.currentTimeMillis()
-
         datePicker.show()
+    }
+
+    /**
+     * Sets up the toolbar back button.
+     */
+    private fun setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     companion object {
         private const val ARG_CANDIDATE_ID = "candidate_id"
 
+        /**
+         * Creates a new instance of [EditFragment] with the provided candidate ID.
+         */
         fun newInstance(id: Long): EditFragment {
-            val fragment = EditFragment()
-            val args = Bundle()
-            args.putLong(ARG_CANDIDATE_ID, id)
-            fragment.arguments = args
-            return fragment
+            return EditFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(ARG_CANDIDATE_ID, id)
+                }
+            }
         }
     }
-
 }
-

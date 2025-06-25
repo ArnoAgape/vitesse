@@ -26,6 +26,7 @@
     <string name="save">Sauvegarder</string>
     <string name="mandatory_field">Champ obligatoire</string>
     <string name="invalid_format">Format invalide</string>
+    <string name="error_loading_candidates">Erreur de chargement</string>
     <string name="edit">Modifier</string>
     <string name="delete">Supprimer</string>
     <string name="deletion">Suppression</string>

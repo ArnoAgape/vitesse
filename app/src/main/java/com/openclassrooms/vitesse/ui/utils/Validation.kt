@@ -7,7 +7,6 @@ import com.openclassrooms.vitesse.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.Locale
 
 object Validation {
 
@@ -30,15 +29,16 @@ object Validation {
     }
 
     fun isBirthdateValid(birthdate: String): Boolean {
-        return try {
-            val locale = Locale.getDefault()
-            val pattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
-            val formatter = DateTimeFormatter.ofPattern(pattern, locale)
-            LocalDate.parse(birthdate, formatter)
-            true
-        } catch (e: DateTimeParseException) {
-            false
+        val patterns = listOf("dd/MM/yyyy", "MM/dd/yyyy")
+
+        return patterns.any { pattern ->
+            try {
+                val formatter = DateTimeFormatter.ofPattern(pattern)
+                LocalDate.parse(birthdate, formatter)
+                true
+            } catch (e: DateTimeParseException) {
+                false
+            }
         }
     }
-
 }

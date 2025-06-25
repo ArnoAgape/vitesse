@@ -22,8 +22,12 @@ import com.openclassrooms.vitesse.ui.home.CandidateAdapter.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.flow.combine
 import kotlin.getValue
 
+/**
+ * Home screen fragment displaying a list of candidates with search, tabs and loading states.
+ */
 @AndroidEntryPoint
 class HomeFragment : Fragment(), OnItemClickListener {
 
@@ -42,40 +46,108 @@ class HomeFragment : Fragment(), OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        defineRecyclerView()
-        observeCandidates()
+        setupRecyclerView()
         setupFab()
-        setupSearchBar()
         setupTabs()
+        setupSearchBar()
+        observeViewModel()
     }
 
-    private fun defineRecyclerView() {
-        val layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = candidateAdapter
+    // region Setup UI
+
+    /**
+     * Sets up the RecyclerView with adapter and layout manager.
+     */
+    private fun setupRecyclerView() {
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = candidateAdapter
+        }
     }
 
-    private fun observeCandidates() {
+    /**
+     * Configures the floating action button to open the AddFragment.
+     */
+    private fun setupFab() {
+        binding.fab.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, AddFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    /**
+     * Initializes and handles interactions with the TabLayout.
+     */
+    private fun setupTabs() {
+        binding.tab.getTabAt(viewModel.selectedTabIndex.value)?.select()
+        binding.tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewModel.selectedTabIndex.value = tab.position
+                viewModel.toggleFavorites(tab.position == 1)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+    }
+
+    /**
+     * Configures the SearchView to filter candidates as the user types.
+     */
+    private fun setupSearchBar() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onSearchChange(newText.orEmpty())
+                return true
+            }
+        })
+    }
+
+    // endregion
+
+    // region Observers
+
+    /**
+     * Observes UI state, candidate list and error messages from the ViewModel.
+     */
+    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                // Observe combined UI state and candidate list
                 launch {
-                    viewModel.uiState.collect { state ->
-                        binding.loading.visibility =
-                            if (state.result == State.Loading) View.VISIBLE else View.GONE
-                    }
+                    combine(
+                        viewModel.displayedCandidatesFlow,
+                        viewModel.uiState
+                    ) { list, state -> list to state.result }
+                        .collect { (list, result) ->
+                            when (result) {
+                                is State.Loading -> {
+                                    binding.loading.visibility = View.VISIBLE
+                                    binding.recyclerView.visibility = View.GONE
+                                    binding.noCandidate.visibility = View.GONE
+                                }
+                                is State.Success -> {
+                                    binding.loading.visibility = View.GONE
+                                    binding.recyclerView.visibility = View.VISIBLE
+                                    binding.noCandidate.visibility =
+                                        if (list.isEmpty()) View.VISIBLE else View.GONE
+                                    candidateAdapter.submitList(list)
+                                }
+                                is State.Error -> {
+                                    binding.loading.visibility = View.GONE
+                                    binding.recyclerView.visibility = View.GONE
+                                    binding.noCandidate.visibility = View.VISIBLE
+                                }
+                                else -> Unit
+                            }
+                        }
                 }
-                launch {
-                    viewModel.displayedCandidatesFlow.collect { list ->
-                        candidateAdapter.submitList(list)
-                        binding.noCandidate.visibility =
-                            if (list.isEmpty()) View.VISIBLE else View.INVISIBLE
-                    }
-                }
-                launch {
-                    viewModel.displayedAllCandidatesFlow.collect { list ->
-                        candidateAdapter.submitList(list)
-                    }
-                }
+
+                // Observe errors
                 launch {
                     viewModel.errorFlow.collect { errorMessage ->
                         errorMessage?.let {
@@ -87,42 +159,15 @@ class HomeFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    private fun setupFab() {
-        binding.fab.setOnClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(R.id.container, AddFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-    }
+    // endregion
 
-    private fun setupTabs() {
-        binding.tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                viewModel.toggleFavorites(tab.position == 1)
-            }
+    // region Navigation
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
-        binding.tab.getTabAt(viewModel.currentTab.value)?.select()
-
-    }
-
-    private fun setupSearchBar() {
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.onSearchChange(newText.orEmpty())
-                return true
-            }
-        })
-    }
-
+    /**
+     * Handles click on a candidate item. Navigates to the detail screen.
+     *
+     * @param item The clicked [Candidate]
+     */
     override fun onItemClick(item: Candidate) {
         item.id?.let { id ->
             val fragment = DetailFragment.newInstance(id)
@@ -132,5 +177,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 .commit()
         }
     }
+
+    // endregion
 }
 

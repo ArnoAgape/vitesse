@@ -29,14 +29,26 @@ import com.openclassrooms.vitesse.ui.edit.EditFragment
 import com.openclassrooms.vitesse.ui.utils.Format
 import kotlinx.coroutines.launch
 
+/**
+ * Detail screen fragment displaying the details of a candidate.
+ */
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
+
+    // ----------------------------
+    // Properties
+    // ----------------------------
 
     private var isFavorite: Boolean = false
     private var candidateId: Long = -1L
     private lateinit var candidate: Candidate
     private lateinit var binding: DetailScreenBinding
+
     private val viewModel: DetailViewModel by viewModels()
+
+    // ----------------------------
+    // Lifecycle
+    // ----------------------------
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,95 +61,164 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
 
         viewModel.getEuroConverted()
         viewModel.getCandidateById(candidateId)
 
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.edit_candidate, menu)
-                val starItem = menu.findItem(R.id.favorite)
-                updateStarIcon(starItem)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.favorite -> {
-                        isFavorite = !isFavorite
-                        updateStarIcon(menuItem)
-                        viewModel.toggleFavorite(candidateId, isFavorite)
-                        true
-                    }
-
-                    R.id.edit -> {
-                        setupEditButton()
-                        true
-                    }
-
-                    R.id.delete -> {
-                        showDeleteConfirmationDialog()
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-        observeCandidate()
+        setupMenu()
+        observeViewModel()
     }
 
-    private fun observeCandidate() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.candidateFlow.collect { candidateResult ->
-                        candidateResult?.let {
-                            candidate = it
-                            binding.phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
-                            binding.message.setOnClickListener { sendSms(candidate.phone) }
-                            binding.email.setOnClickListener { sendEmail(candidate.email) }
-                            binding.birthdateEdit.text =
-                                Format.formatBirthdateWithAge(requireContext(), candidate.birthdate)
-                            binding.salaryEdit.text =
-                                String.format("%s €", candidate.salary.toString())
-                            binding.notesEdit.text = candidate.notes
-                            Glide.with(binding.root.context)
-                                .load(candidate.profilePicture)
-                                .placeholder(R.drawable.ic_profile_pic)
-                                .error(R.drawable.ic_profile_pic)
-                                .into(binding.profilePicture)
-                            setupToolbar(candidate)
-                            isFavorite = candidate.isFavorite
-                            candidateId = candidate.id!!
-                            requireActivity().invalidateOptionsMenu()
-                        }
-                    }
+    // ----------------------------
+    // Menu
+    // ----------------------------
+
+    /**
+     * Sets up the top app bar menu with favorite, edit, and delete actions.
+     */
+    private fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(
+            buildMenuProvider(),
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
+    }
+
+    private fun buildMenuProvider() = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.edit_candidate, menu)
+            updateStarIcon(menu.findItem(R.id.favorite))
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return when (menuItem.itemId) {
+                R.id.favorite -> {
+                    isFavorite = !isFavorite
+                    updateStarIcon(menuItem)
+                    viewModel.toggleFavorite(candidateId, isFavorite)
+                    true
                 }
-                launch {
-                    viewModel.errorFlow.collect { errorMessage ->
-                        errorMessage?.let {
-                            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        }
-                    }
+
+                R.id.edit -> {
+                    navigateToEditScreen()
+                    true
                 }
-                launch {
-                    viewModel.gbpFlow.collect { gbpRate ->
-                        gbpRate?.let {
-                            binding.salaryConverted.text =
-                                Format.formatExpectedSalaryInPounds(
-                                    requireContext(),
-                                    candidate.salary,
-                                    gbpRate
-                                )
-                        }
-                    }
+
+                R.id.delete -> {
+                    showDeleteConfirmationDialog()
+                    true
                 }
+
+                else -> false
             }
         }
     }
 
+    // ----------------------------
+    // Observers
+    // ----------------------------
+
+    /**
+     * Observes UI flows from the ViewModel.
+     */
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { collectCandidate() }
+                launch { collectErrors() }
+                launch { collectCurrencyRate() }
+            }
+        }
+    }
+
+    private suspend fun collectCandidate() {
+        viewModel.candidateFlow.collect { candidateResult ->
+            candidateResult?.let {
+                candidate = it
+                bindCandidateDetails(candidate)
+                setupToolbar(candidate)
+                isFavorite = candidate.isFavorite
+                candidateId = candidate.id!!
+                requireActivity().invalidateOptionsMenu()
+            }
+        }
+    }
+
+    private suspend fun collectErrors() {
+        viewModel.errorFlow.collect { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private suspend fun collectCurrencyRate() {
+        viewModel.gbpFlow.collect { gbpRate ->
+            gbpRate?.let {
+                binding.salaryConverted.text = Format.formatExpectedSalaryInPounds(
+                    requireContext(),
+                    candidate.salary,
+                    gbpRate
+                )
+            }
+        }
+    }
+
+    // ----------------------------
+    // UI Binding
+    // ----------------------------
+
+    /**
+     * Populates the screen with candidate data.
+     */
+    private fun bindCandidateDetails(candidate: Candidate) = with(binding) {
+        phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
+        message.setOnClickListener { sendSms(candidate.phone) }
+        email.setOnClickListener { sendEmail(candidate.email) }
+
+        birthdateEdit.text = Format.formatBirthdateWithAge(requireContext(), candidate.birthdate)
+        salaryEdit.text = String.format("%s €", candidate.salary.toString())
+        notesEdit.text = candidate.notes
+
+        Glide.with(root.context)
+            .load(candidate.profilePicture)
+            .placeholder(R.drawable.ic_profile_pic)
+            .error(R.drawable.ic_profile_pic)
+            .into(profilePicture)
+    }
+
+    private fun setupToolbar(candidate: Candidate) {
+        val toolbar = binding.toolbar
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            "${candidate.firstname} ${candidate.lastname}"
+
+        toolbar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+    }
+
+    // ----------------------------
+    // Navigation & Actions
+    // ----------------------------
+
+    /**
+     * Navigates to the EditFragment with current candidate ID.
+     */
+    private fun navigateToEditScreen() {
+        val fragment = EditFragment.newInstance(candidateId)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    /**
+     * Displays confirmation dialog before deleting a candidate.
+     */
     private fun showDeleteConfirmationDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.deletion)
@@ -145,40 +226,21 @@ class DetailFragment : Fragment() {
             .setPositiveButton(R.string.confirm) { dialog, _ ->
                 viewModel.deleteCandidate(candidate)
                 parentFragmentManager.popBackStack()
-
                 Toast.makeText(context, R.string.deleted, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
-            .setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
     }
 
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+
     private fun updateStarIcon(item: MenuItem) {
         val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
         item.setIcon(iconRes)
-    }
-
-    private fun setupEditButton() {
-        val fragment = EditFragment.newInstance(candidateId)
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.container, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
-
-    private fun setupToolbar(candidate: Candidate) {
-        val toolbar = binding.toolbar
-        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
-
-        val fullName = "${candidate.firstname} ${candidate.lastname}"
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = fullName
-        toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
     }
 
     private fun dialPhoneNumber(phoneNumber: String) {
@@ -217,18 +279,23 @@ class DetailFragment : Fragment() {
         }
     }
 
+    // ----------------------------
+    // Companion
+    // ----------------------------
+
     companion object {
         private const val ARG_CANDIDATE_ID = "candidate_id"
 
+        /**
+         * Factory method to create a new instance of DetailFragment.
+         * @param id ID of the candidate to display.
+         */
         fun newInstance(id: Long): DetailFragment {
-            val fragment = DetailFragment()
-            val args = Bundle()
-            args.putLong(ARG_CANDIDATE_ID, id)
-            fragment.arguments = args
-            return fragment
+            return DetailFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(ARG_CANDIDATE_ID, id)
+                }
+            }
         }
     }
-
 }
-
-
