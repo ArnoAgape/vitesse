@@ -30,10 +30,10 @@ data class CandidateDto(
     val salary: Int,
 
     @ColumnInfo(name = "notes")
-    val notes: String,
+    val notes: String?,
 
     @ColumnInfo(name = "profile_picture")
-    val profilePicture: String,
+    val profilePicture: String?,
 
     @ColumnInfo(name = "favorite")
     val isFavorite: Boolean

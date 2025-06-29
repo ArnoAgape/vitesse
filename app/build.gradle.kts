@@ -31,6 +31,14 @@ android {
             )
         }
     }
+    packaging {
+        resources {
+            excludes += setOf(
+                "/META-INF/LICENSE.md",
+                "/META-INF/NOTICE.md"
+            )
+        }
+    }
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -61,6 +69,8 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
+    implementation(libs.androidx.databinding.compiler)
+    implementation(libs.androidx.room.rxjava3)
     ksp(libs.room.compiler)
 
     implementation(libs.androidx.core.ktx)

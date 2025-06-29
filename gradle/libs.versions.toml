@@ -22,6 +22,8 @@ retrofit = "3.0.0"
 ksp = "2.2.0-2.0.2"
 room = "2.7.2"
 turbine = "1.2.1"
+databindingCompiler = "8.11.0"
+roomRxjava3 = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +49,8 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 moshi = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-databinding-compiler = { group = "androidx.databinding", name = "databinding-compiler", version.ref = "databindingCompiler" }
+androidx-room-rxjava3 = { group = "androidx.room", name = "room-rxjava3", version.ref = "roomRxjava3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

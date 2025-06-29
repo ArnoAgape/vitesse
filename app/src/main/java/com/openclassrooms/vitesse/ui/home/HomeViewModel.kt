@@ -22,9 +22,6 @@ class HomeViewModel @Inject constructor(
     private val repository: CandidateRepository
 ) : ViewModel() {
 
-    // ----------------------------
-    // UI State
-    // ----------------------------
 
     /** Global UI state used to represent screen-level status (Loading, Success, Error). */
     private val _uiState = MutableStateFlow(HomeUIState())
@@ -34,19 +31,11 @@ class HomeViewModel @Inject constructor(
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
 
-    // ----------------------------
-    // Raw Data
-    // ----------------------------
-
     /** All candidates retrieved from the database. */
     private val _allCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
 
     /** Favorite candidates retrieved from the database. */
     private val _favoriteCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
-
-    // ----------------------------
-    // Filters & UI Controls
-    // ----------------------------
 
     /** Toggle to show either all or only favorite candidates. */
     val showFavorites = MutableStateFlow(false)
@@ -59,10 +48,6 @@ class HomeViewModel @Inject constructor(
 
     /** Index of the selected tab in the UI. */
     val selectedTabIndex = MutableStateFlow(0)
-
-    // ----------------------------
-    // Displayed Candidates
-    // ----------------------------
 
     /**
      * Candidates to be shown on screen depending on current filters:
@@ -80,37 +65,25 @@ class HomeViewModel @Inject constructor(
             if (query.isBlank()) base
             else base.filter {
                 it.firstname.contains(query, ignoreCase = true) ||
-                        it.lastname.contains(query, ignoreCase = true)
+                it.lastname.contains(query, ignoreCase = true)
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-    // ----------------------------
-    // Initialization
-    // ----------------------------
 
     init {
         loadAllCandidates()
         loadAllFavoriteCandidates()
     }
 
-    // ----------------------------
-    // Public UI Actions
-    // ----------------------------
-
     /** Allows toggling between all candidates and favorites only. */
     fun toggleFavorites(show: Boolean) {
         showFavorites.value = show
     }
 
-    // ----------------------------
-    // Private Data Loading
-    // ----------------------------
-
     /** Fetches all candidates and updates UI state accordingly. */
     private fun loadAllCandidates() {
         _uiState.update { it.copy(result = State.Loading) }
         viewModelScope.launch {
-            // delay(500) // Simulated delay for loading feedback
+            delay(1000) // Simulated delay for loading feedback
             repository.getAllCandidates().collect { result ->
                 result.onSuccess {
                     _allCandidatesFlow.value = it

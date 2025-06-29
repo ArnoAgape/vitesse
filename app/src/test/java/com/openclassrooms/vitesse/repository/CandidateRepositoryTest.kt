@@ -5,7 +5,6 @@ import com.openclassrooms.vitesse.data.dao.CandidateDao
 import com.openclassrooms.vitesse.data.dto.CandidateDto
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.domain.model.Candidate
-import io.mockk.awaits
 import io.mockk.coEvery
 import kotlinx.coroutines.test.runTest
 import io.mockk.mockk

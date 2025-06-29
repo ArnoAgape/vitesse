@@ -30,4 +30,8 @@ interface CandidateDao {
 
     @Query("UPDATE candidate SET favorite = :isFavorite WHERE id = :id")
     suspend fun updateFavorite(id: Long, isFavorite: Boolean)
+
+    @Query("SELECT * FROM candidate WHERE id = :id")
+    suspend fun getCandidateByIdOrNull(id: Long): CandidateDto?
+
 }
