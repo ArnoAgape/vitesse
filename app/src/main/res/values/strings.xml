@@ -43,6 +43,7 @@
     <string name="send_sms">Send a SMS</string>
     <string name="no_email">No email application available</string>
     <string name="no_phone">No messaging application available</string>
+    <string name="no_network">Check your Internet connection for the currency conversion</string>
     <string name="about">About</string>
     <string name="back">Back</string>
 </resources>

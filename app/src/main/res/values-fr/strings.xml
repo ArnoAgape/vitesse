@@ -42,6 +42,7 @@
     <string name="send_sms">Envoyer un SMS</string>
     <string name="no_email">Aucune application d\'email disponible</string>
     <string name="no_phone">Aucune application de messagerie disponible</string>
+    <string name="no_network">Vérifiez votre connexion internet pour la conversion de la devise</string>
     <string name="about">À propos</string>
     <string name="back">Retour</string>
 </resources>

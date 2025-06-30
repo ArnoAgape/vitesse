@@ -79,6 +79,9 @@ class DetailFragment : Fragment() {
         )
     }
 
+    /**
+     * Builds the menu provider handling menu creation and item selection.
+     */
     private fun buildMenuProvider() = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.edit_candidate, menu)
@@ -122,6 +125,9 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Collects candidate details from the ViewModel and binds them to the UI.
+     */
     private suspend fun collectCandidate() {
         viewModel.candidateFlow.collect { candidateResult ->
             candidateResult?.let {
@@ -135,14 +141,29 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Collects error messages from the ViewModel and displays appropriate messages to the user.
+     */
     private suspend fun collectErrors() {
         viewModel.errorFlow.collect { errorMessage ->
             errorMessage?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                val isNetworkError = it.contains("Unable to resolve host", ignoreCase = true)
+                        || it.contains("timeout", ignoreCase = true)
+                        || it.contains("Failed to connect", ignoreCase = true)
+                        || it.contains("No address associated with hostname", ignoreCase = true)
+                val displayedMessage = if (isNetworkError) {
+                    getString(R.string.no_network)
+                } else {
+                    it
+                }
+                Toast.makeText(requireContext(), displayedMessage, Toast.LENGTH_LONG).show()
             }
         }
     }
 
+    /**
+     * Collects currency conversion rate and updates the salary in pounds.
+     */
     private suspend fun collectCurrencyRate() {
         viewModel.gbpFlow.collect { gbpRate ->
             gbpRate?.let {
@@ -174,6 +195,11 @@ class DetailFragment : Fragment() {
             .into(profilePicture)
     }
 
+    /**
+     * Sets up the toolbar with the candidate's name and back navigation.
+     *
+     * @param candidate The candidate displayed on this screen.
+     */
     private fun setupToolbar(candidate: Candidate) {
         val toolbar = binding.toolbar
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
@@ -215,11 +241,21 @@ class DetailFragment : Fragment() {
             .show()
     }
 
+    /**
+     * Updates the favorite icon in the top app bar based on current favorite status.
+     *
+     * @param item The menu item representing the favorite icon.
+     */
     private fun updateStarIcon(item: MenuItem) {
         val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
         item.setIcon(iconRes)
     }
 
+    /**
+     * Launches the dialer app with the candidate's phone number.
+     *
+     * @param phoneNumber The phone number to dial.
+     */
     private fun dialPhoneNumber(phoneNumber: String) {
         val intent = Intent(Intent.ACTION_DIAL).apply {
             data = "tel:$phoneNumber".toUri()
@@ -231,6 +267,12 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Sends an SMS to the given phone number.
+     *
+     * @param phoneNumber The recipient's phone number.
+     * @param message Optional message body to pre-fill.
+     */
     private fun sendSms(phoneNumber: String, message: String = "") {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = "smsto:$phoneNumber".toUri()
@@ -243,6 +285,13 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Sends an email to the given address.
+     *
+     * @param emailAddress The recipient's email address.
+     * @param subject Optional email subject.
+     * @param body Optional email body text.
+     */
     private fun sendEmail(emailAddress: String, subject: String = "", body: String = "") {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = "mailto:$emailAddress".toUri()
