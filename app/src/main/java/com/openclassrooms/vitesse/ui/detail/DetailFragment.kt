@@ -37,7 +37,6 @@ class DetailFragment : Fragment() {
 
     private var isFavorite: Boolean = false
     private var candidateId: Long = -1L
-    private lateinit var candidate: Candidate
     private lateinit var binding: DetailScreenBinding
 
     private val viewModel: DetailViewModel by viewModels()
@@ -129,9 +128,8 @@ class DetailFragment : Fragment() {
      * Collects candidate details from the ViewModel and binds them to the UI.
      */
     private suspend fun collectCandidate() {
-        viewModel.candidateFlow.collect { candidateResult ->
-            candidateResult?.let {
-                candidate = it
+        viewModel.uiState.collect { candidate ->
+            candidate.let {
                 bindCandidateDetails(candidate)
                 setupToolbar(candidate)
                 isFavorite = candidate.isFavorite

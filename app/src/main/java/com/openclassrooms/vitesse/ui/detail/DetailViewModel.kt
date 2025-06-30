@@ -6,10 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.data.repository.CurrencyRepository
 import com.openclassrooms.vitesse.domain.model.Candidate
+import com.openclassrooms.vitesse.states.State
+import com.openclassrooms.vitesse.ui.home.HomeUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +44,11 @@ class DetailViewModel @Inject constructor(
     /** Emits one-time error messages for the UI. */
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
+
+    val uiState: StateFlow<DetailUIState> = combine(_gbpFlow, _candidateFlow)
+    { gbp, candidate ->
+        DetailUIState(result = gbp, candidate = candidate)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, DetailUIState(null, null))
 
     // ----------------------------
     // Public API
@@ -97,3 +107,8 @@ class DetailViewModel @Inject constructor(
         }
     }
 }
+
+data class DetailUIState(
+    val result: Double?,
+    val candidate: Candidate?
+)

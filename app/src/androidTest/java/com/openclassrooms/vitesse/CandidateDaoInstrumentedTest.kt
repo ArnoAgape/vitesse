@@ -8,7 +8,7 @@ import com.openclassrooms.vitesse.data.dao.CandidateDao
 import com.openclassrooms.vitesse.data.database.AppDatabase
 import com.openclassrooms.vitesse.data.dto.CandidateDto
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.After
 import org.junit.Assert.assertNull
@@ -37,7 +37,7 @@ class CandidateDaoInstrumentedTest {
     }
 
     @Test
-    fun insertAndGetCandidateById() = runBlocking {
+    fun insertAndGetCandidateById() = runTest {
         val candidate = CandidateDto(
             id = 1,
             firstname = "Bob",
@@ -58,7 +58,7 @@ class CandidateDaoInstrumentedTest {
     }
 
     @Test
-    fun insertAndDeleteCandidateById() = runBlocking {
+    fun insertAndDeleteCandidateById() = runTest {
         val candidate = CandidateDto(
             id = 1,
             firstname = "Bob",
@@ -83,7 +83,7 @@ class CandidateDaoInstrumentedTest {
     }
 
     @Test
-    fun getAllFavoritesCandidates() = runBlocking {
+    fun getAllFavoritesCandidates() = runTest {
         val candidate = CandidateDto(
             id = 1,
             firstname = "Bob",

@@ -47,11 +47,7 @@ object Format {
         val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val date = LocalDate.parse(birthdate, inputFormatter)
 
-        val locale = Locale.getDefault()
-        val outputPattern = if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
-        val outputFormatter = DateTimeFormatter.ofPattern(outputPattern, locale)
-
-        return date.format(outputFormatter)
+        return formatBirthdateForDisplay(date)
     }
 
     fun formatBirthdateForDisplay(date: LocalDate, locale: Locale = Locale.getDefault()): String {

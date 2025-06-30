@@ -37,4 +37,19 @@ class CurrencyRepositoryTest {
         assertEquals(0.89, result)
 
     }
+
+    @Test
+    fun `get euro amount converted into gbp with no value`() = runTest {
+
+        val gbp = EuroToGbpResponse(mapOf())
+
+        coEvery { api.getGbpRate() } returns gbp
+
+        // Act
+        val result = repo.getEuroToGbpRate()
+
+        // Assert
+        assertEquals(null, result)
+
+    }
 }

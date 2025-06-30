@@ -24,8 +24,7 @@ class HomeViewModel @Inject constructor(
 
 
     /** Global UI state used to represent screen-level status (Loading, Success, Error). */
-    private val _uiState = MutableStateFlow(HomeUIState())
-    val uiState: StateFlow<HomeUIState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<State>(State.Loading)
 
     /** Emits error messages to be displayed in the UI. */
     private val _errorFlow = MutableStateFlow<String?>(null)
@@ -54,7 +53,7 @@ class HomeViewModel @Inject constructor(
      * - all vs favorites
      * - search query
      */
-    val displayedCandidatesFlow: StateFlow<List<Candidate>> =
+    private val displayedCandidatesFlow: StateFlow<List<Candidate>> =
         combine(
             _allCandidatesFlow,
             _favoriteCandidatesFlow,
@@ -65,9 +64,14 @@ class HomeViewModel @Inject constructor(
             if (query.isBlank()) base
             else base.filter {
                 it.firstname.contains(query, ignoreCase = true) ||
-                it.lastname.contains(query, ignoreCase = true)
+                        it.lastname.contains(query, ignoreCase = true)
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val uiState: StateFlow<HomeUIState> = combine(_uiState, displayedCandidatesFlow)
+    { uiState, candidates ->
+        HomeUIState(result = uiState, candidate = candidates)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, HomeUIState())
 
     init {
         loadAllCandidates()
@@ -81,16 +85,16 @@ class HomeViewModel @Inject constructor(
 
     /** Fetches all candidates and updates UI state accordingly. */
     private fun loadAllCandidates() {
-        _uiState.update { it.copy(result = State.Loading) }
+        _uiState.update { State.Loading }
         viewModelScope.launch {
             delay(1000) // Simulated delay for loading feedback
             repository.getAllCandidates().collect { result ->
                 result.onSuccess {
                     _allCandidatesFlow.value = it
-                    _uiState.update { state -> state.copy(result = State.Success) }
+                    _uiState.update { State.Success }
                 }.onFailure {
                     _errorFlow.value = it.message ?: "Error loading the candidates"
-                    _uiState.update { state -> state.copy(result = State.Error) }
+                    _uiState.update { State.Error }
                 }
             }
         }

@@ -22,7 +22,6 @@ import com.openclassrooms.vitesse.ui.home.CandidateAdapter.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.google.android.material.tabs.TabLayout
-import kotlinx.coroutines.flow.combine
 import kotlin.getValue
 
 /**
@@ -116,35 +115,33 @@ class HomeFragment : Fragment(), OnItemClickListener {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-                // Observe combined UI state and candidate list
                 launch {
-                    combine(
-                        viewModel.displayedCandidatesFlow,
-                        viewModel.uiState
-                    ) { list, state -> list to state.result }
-                        .collect { (list, result) ->
-                            when (result) {
-                                is State.Loading -> {
-                                    binding.loading.visibility = View.VISIBLE
-                                    binding.recyclerView.visibility = View.GONE
-                                    binding.noCandidate.visibility = View.GONE
-                                }
-                                is State.Success -> {
-                                    binding.loading.visibility = View.GONE
-                                    binding.recyclerView.visibility = View.VISIBLE
-                                    binding.noCandidate.visibility =
-                                        if (list.isEmpty()) View.VISIBLE else View.GONE
-                                    candidateAdapter.submitList(list)
-                                }
-                                is State.Error -> {
-                                    binding.loading.visibility = View.GONE
-                                    binding.recyclerView.visibility = View.GONE
-                                    binding.noCandidate.visibility = View.VISIBLE
-                                }
-                                else -> Unit
+                    viewModel.uiState.collect { state ->
+
+                        when (state.result) {
+                            is State.Loading -> {
+                                binding.loading.visibility = View.VISIBLE
+                                binding.recyclerView.visibility = View.GONE
+                                binding.noCandidate.visibility = View.GONE
                             }
+
+                            is State.Success -> {
+                                binding.loading.visibility = View.GONE
+                                binding.recyclerView.visibility = View.VISIBLE
+                                binding.noCandidate.visibility =
+                                    if (state.candidate.isEmpty()) View.VISIBLE else View.GONE
+                                candidateAdapter.submitList(state.candidate)
+                            }
+
+                            is State.Error -> {
+                                binding.loading.visibility = View.GONE
+                                binding.recyclerView.visibility = View.GONE
+                                binding.noCandidate.visibility = View.VISIBLE
+                            }
+
+                            else -> Unit
                         }
+                    }
                 }
 
                 // Observe errors
