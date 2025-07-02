@@ -64,7 +64,7 @@ class HomeViewModel @Inject constructor(
             if (query.isBlank()) base
             else base.filter {
                 it.firstname.contains(query, ignoreCase = true) ||
-                        it.lastname.contains(query, ignoreCase = true)
+                it.lastname.contains(query, ignoreCase = true)
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 

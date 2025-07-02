@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.vitesse.ui.edit.EditFragment
 import com.openclassrooms.vitesse.ui.utils.Format
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /**
  * Detail screen fragment displaying the details of a candidate.
@@ -35,16 +36,10 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
-    private var isFavorite: Boolean = false
-    private var candidateId: Long = -1L
+    private var favoriteMenuItem: MenuItem? = null
     private lateinit var binding: DetailScreenBinding
 
     private val viewModel: DetailViewModel by viewModels()
-
-    override fun onResume() {
-        super.onResume()
-        candidateId.let { viewModel.getCandidateById(it) }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,10 +53,10 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        candidateId = arguments?.getLong(ARG_CANDIDATE_ID) ?: -1L
+        val id = arguments?.getLong(ARG_CANDIDATE_ID) ?: return
 
         viewModel.getEuroConverted()
-        viewModel.getCandidateById(candidateId)
+        viewModel.getCandidateById(id)
 
         setupMenu()
         observeViewModel()
@@ -84,15 +79,14 @@ class DetailFragment : Fragment() {
     private fun buildMenuProvider() = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.edit_candidate, menu)
-            updateStarIcon(menu.findItem(R.id.favorite))
+            favoriteMenuItem = menu.findItem(R.id.favorite)
+            updateStarIcon()
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             return when (menuItem.itemId) {
                 R.id.favorite -> {
-                    isFavorite = !isFavorite
-                    updateStarIcon(menuItem)
-                    viewModel.toggleFavorite(candidateId, isFavorite)
+                    viewModel.toggleFavorite()
                     true
                 }
 
@@ -117,27 +111,29 @@ class DetailFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { collectCandidate() }
-                launch { collectErrors() }
-                launch { collectCurrencyRate() }
+                viewModel.uiState.collect { state ->
+                    val candidate = state.candidate
+                    val gbp = state.result
+
+                    if (candidate != null) {
+                        renderDetails(candidate)
+                        updateStarIcon()
+
+                        if (gbp != null) {
+                            val salaryInPounds = Format.convertSalaryToPounds(candidate.salary, gbp)
+                            val formatted = Format.formatAmount(salaryInPounds, Locale.UK)
+                            binding.salaryConverted.text =
+                                getString(R.string.expected_salary_pounds, formatted)
+
+                        }
+
+                    }
+                }
             }
+            launch { collectErrors() }
         }
     }
 
-    /**
-     * Collects candidate details from the ViewModel and binds them to the UI.
-     */
-    private suspend fun collectCandidate() {
-        viewModel.uiState.collect { candidate ->
-            candidate.let {
-                bindCandidateDetails(candidate)
-                setupToolbar(candidate)
-                isFavorite = candidate.isFavorite
-                candidateId = candidate.id!!
-                requireActivity().invalidateOptionsMenu()
-            }
-        }
-    }
 
     /**
      * Collects error messages from the ViewModel and displays appropriate messages to the user.
@@ -160,24 +156,9 @@ class DetailFragment : Fragment() {
     }
 
     /**
-     * Collects currency conversion rate and updates the salary in pounds.
-     */
-    private suspend fun collectCurrencyRate() {
-        viewModel.gbpFlow.collect { gbpRate ->
-            gbpRate?.let {
-                binding.salaryConverted.text = Format.formatExpectedSalaryInPounds(
-                    requireContext(),
-                    candidate.salary,
-                    gbpRate
-                )
-            }
-        }
-    }
-
-    /**
      * Populates the screen with candidate data.
      */
-    private fun bindCandidateDetails(candidate: Candidate) = with(binding) {
+    private fun renderDetails(candidate: Candidate) = with(binding) {
         phoneContainer.setOnClickListener { dialPhoneNumber(candidate.phone) }
         message.setOnClickListener { sendSms(candidate.phone) }
         email.setOnClickListener { sendEmail(candidate.email) }
@@ -191,14 +172,11 @@ class DetailFragment : Fragment() {
             .placeholder(R.drawable.ic_profile_pic)
             .error(R.drawable.ic_profile_pic)
             .into(profilePicture)
-    }
 
-    /**
-     * Sets up the toolbar with the candidate's name and back navigation.
-     *
-     * @param candidate The candidate displayed on this screen.
-     */
-    private fun setupToolbar(candidate: Candidate) {
+        favoriteMenuItem?.setIcon(
+            if (candidate.isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+        )
+
         val toolbar = binding.toolbar
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -211,10 +189,21 @@ class DetailFragment : Fragment() {
     }
 
     /**
+     * Updates the star icon in the top app bar based on the current candidate's favorite status.
+     */
+    private fun updateStarIcon() {
+        val isFavorite = viewModel.uiState.value.candidate?.isFavorite ?: return
+        favoriteMenuItem?.setIcon(
+            if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+        )
+    }
+
+    /**
      * Navigates to the EditFragment with current candidate ID.
      */
     private fun navigateToEditScreen() {
-        val fragment = EditFragment.newInstance(candidateId)
+        val id = arguments?.getLong(ARG_CANDIDATE_ID) ?: return
+        val fragment = EditFragment.newInstance(id)
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .addToBackStack(null)
@@ -229,7 +218,7 @@ class DetailFragment : Fragment() {
             .setTitle(R.string.deletion)
             .setMessage(R.string.sure_delete)
             .setPositiveButton(R.string.confirm) { dialog, _ ->
-                viewModel.deleteCandidate(candidate)
+                viewModel.deleteCandidate()
                 parentFragmentManager.popBackStack()
                 Toast.makeText(context, R.string.deleted, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
@@ -237,16 +226,6 @@ class DetailFragment : Fragment() {
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
-    }
-
-    /**
-     * Updates the favorite icon in the top app bar based on current favorite status.
-     *
-     * @param item The menu item representing the favorite icon.
-     */
-    private fun updateStarIcon(item: MenuItem) {
-        val iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
-        item.setIcon(iconRes)
     }
 
     /**

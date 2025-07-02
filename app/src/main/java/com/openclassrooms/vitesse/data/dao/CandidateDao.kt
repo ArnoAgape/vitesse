@@ -17,7 +17,7 @@ interface CandidateDao {
     fun getAllCandidates(): Flow<List<CandidateDto>>
 
     @Query("SELECT * FROM candidate WHERE id = :id")
-    suspend fun getCandidateById(id: Long): CandidateDto
+    suspend fun getCandidateById(id: Long?): CandidateDto
 
     @Query("SELECT * FROM candidate WHERE favorite = :isFavorite")
     fun getAllFavoriteCandidates(isFavorite: Boolean): Flow<List<CandidateDto>>
@@ -29,7 +29,7 @@ interface CandidateDao {
     suspend fun updateCandidate(candidate: CandidateDto)
 
     @Query("UPDATE candidate SET favorite = :isFavorite WHERE id = :id")
-    suspend fun updateFavorite(id: Long, isFavorite: Boolean)
+    suspend fun updateFavorite(id: Long?, isFavorite: Boolean)
 
     @Query("SELECT * FROM candidate WHERE id = :id")
     suspend fun getCandidateByIdOrNull(id: Long): CandidateDto?

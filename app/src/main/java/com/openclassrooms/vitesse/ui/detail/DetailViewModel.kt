@@ -6,8 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.data.repository.CurrencyRepository
 import com.openclassrooms.vitesse.domain.model.Candidate
-import com.openclassrooms.vitesse.states.State
-import com.openclassrooms.vitesse.ui.home.HomeUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,11 +33,9 @@ class DetailViewModel @Inject constructor(
 
     /** Emits the currently selected candidate. */
     private val _candidateFlow = MutableStateFlow<Candidate?>(null)
-    val candidateFlow: StateFlow<Candidate?> = _candidateFlow.asStateFlow()
 
     /** Emits the latest exchange rate EUR -> GBP. */
     private val _gbpFlow = MutableStateFlow<Double?>(null)
-    val gbpFlow: StateFlow<Double?> = _gbpFlow.asStateFlow()
 
     /** Emits one-time error messages for the UI. */
     private val _errorFlow = MutableStateFlow<String?>(null)
@@ -58,7 +54,7 @@ class DetailViewModel @Inject constructor(
      * Loads and emits the candidate for the given ID.
      * @param id Candidate's unique identifier.
      */
-    fun getCandidateById(id: Long) {
+    fun getCandidateById(id: Long?) {
         viewModelScope.launch {
             val result = repository.getCandidate(id)
             if (result.isSuccess) {
@@ -88,9 +84,12 @@ class DetailViewModel @Inject constructor(
 
     /**
      * Deletes the given candidate from the database.
-     * @param candidate Candidate to delete.
      */
-    fun deleteCandidate(candidate: Candidate) {
+    fun deleteCandidate() {
+        val candidate = uiState.value.candidate
+        if (candidate == null) {
+            return
+        }
         viewModelScope.launch {
             repository.deleteCandidate(candidate)
         }
@@ -98,12 +97,15 @@ class DetailViewModel @Inject constructor(
 
     /**
      * Updates the favorite status of a candidate.
-     * @param id Candidate ID.
-     * @param isFavorite New favorite value.
      */
-    fun toggleFavorite(id: Long, isFavorite: Boolean) {
+    fun toggleFavorite() {
+        val candidate = uiState.value.candidate
+        if (candidate == null) {
+            return
+        }
         viewModelScope.launch {
-            repository.updateFavorite(id, isFavorite)
+            repository.updateFavorite(candidate.id, !candidate.isFavorite)
+            getCandidateById(candidate.id)
         }
     }
 }

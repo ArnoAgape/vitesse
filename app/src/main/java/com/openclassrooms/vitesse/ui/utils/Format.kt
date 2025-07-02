@@ -16,15 +16,10 @@ object Format {
         return formatter.format(amount)
     }
 
-    fun formatExpectedSalaryInPounds(context: Context, salary: Int, gbpRate: Double): String {
-        val convertedSalary = (salary * gbpRate).let {
+    fun convertSalaryToPounds(salary: Int, gbpRate: Double): Double {
+        return (salary * gbpRate).let {
             (it * 100).roundToInt() / 100.0
         }
-
-        val gbpSuffix = context.getString(R.string.expected_salary_pounds)
-        val formatted = formatAmount(convertedSalary, Locale.UK)
-
-        return "$gbpSuffix $formatted"
     }
 
     fun formatBirthdateWithAge(context: Context, birthdate: String): String {
