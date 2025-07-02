@@ -1,7 +1,5 @@
 package com.openclassrooms.vitesse.ui.utils
 
-import android.content.Context
-import com.openclassrooms.vitesse.R
 import android.icu.text.NumberFormat
 import java.time.LocalDate
 import java.time.Period
@@ -22,7 +20,7 @@ object Format {
         }
     }
 
-    fun formatBirthdateWithAge(context: Context, birthdate: String): String {
+    fun formatBirthdateWithAge(birthdate: String): Pair<String, Int> {
         val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val date = LocalDate.parse(birthdate, inputFormatter)
 
@@ -33,9 +31,8 @@ object Format {
         val formattedDate = date.format(outputFormatter)
         val today = LocalDate.now()
         val age = Period.between(date, today).years
-        val ageSuffix = context.getString(R.string.age)
 
-        return "$formattedDate ($age $ageSuffix)"
+        return formattedDate to age
     }
 
     fun formatBirthdateForLocale(birthdate: String): String {

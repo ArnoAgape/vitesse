@@ -15,13 +15,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: CandidateRepository
 ) : ViewModel() {
-
 
     /** Global UI state used to represent screen-level status (Loading, Success, Error). */
     private val _uiState = MutableStateFlow<State>(State.Loading)
@@ -32,9 +32,11 @@ class HomeViewModel @Inject constructor(
 
     /** All candidates retrieved from the database. */
     private val _allCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
+    val allCandidatesFlow: StateFlow<List<Candidate>> = _allCandidatesFlow.asStateFlow()
 
     /** Favorite candidates retrieved from the database. */
     private val _favoriteCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
+    val favoriteCandidatesFlow: StateFlow<List<Candidate>> = _favoriteCandidatesFlow.asStateFlow()
 
     /** Toggle to show either all or only favorite candidates. */
     val showFavorites = MutableStateFlow(false)
@@ -64,7 +66,7 @@ class HomeViewModel @Inject constructor(
             if (query.isBlank()) base
             else base.filter {
                 it.firstname.contains(query, ignoreCase = true) ||
-                it.lastname.contains(query, ignoreCase = true)
+                        it.lastname.contains(query, ignoreCase = true)
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -112,7 +114,18 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    @VisibleForTesting
+    fun setAllCandidates(candidates: List<Candidate>) {
+        _allCandidatesFlow.value = candidates
+    }
+
+    @VisibleForTesting
+    fun setFavoriteCandidates(candidates: List<Candidate>) {
+        _favoriteCandidatesFlow.value = candidates
+    }
 }
+
 
 /**
  * Represents the state of the Home screen.

@@ -21,6 +21,7 @@ import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
 import com.openclassrooms.vitesse.ui.utils.Format
 import com.openclassrooms.vitesse.ui.utils.Validation
+import com.openclassrooms.vitesse.ui.utils.ValidationUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -145,9 +146,9 @@ class EditFragment : Fragment() {
             val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
 
             val isFirstNameValid =
-                Validation.validateField(requireContext(), newFirstName, binding.firstName)
+                ValidationUi.validateField(requireContext(), newFirstName, binding.firstName)
             val isLastNameValid =
-                Validation.validateField(requireContext(), newLastName, binding.lastName)
+                ValidationUi.validateField(requireContext(), newLastName, binding.lastName)
             val isPhoneValid = validatePhone(newPhone)
             val isEmailValid = validateEmail(newEmail)
             val isBirthdateValid = validateBirthdate(newBirthdate)

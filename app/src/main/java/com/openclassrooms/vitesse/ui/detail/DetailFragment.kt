@@ -124,7 +124,6 @@ class DetailFragment : Fragment() {
                             val formatted = Format.formatAmount(salaryInPounds, Locale.UK)
                             binding.salaryConverted.text =
                                 getString(R.string.expected_salary_pounds, formatted)
-
                         }
 
                     }
@@ -163,7 +162,8 @@ class DetailFragment : Fragment() {
         message.setOnClickListener { sendSms(candidate.phone) }
         email.setOnClickListener { sendEmail(candidate.email) }
 
-        birthdateEdit.text = Format.formatBirthdateWithAge(requireContext(), candidate.birthdate)
+        val (formatted, age) = Format.formatBirthdateWithAge(candidate.birthdate)
+        birthdateEdit.text = getString(R.string.age, formatted, age)
         salaryEdit.text = String.format("%s €", candidate.salary.toString())
         notesEdit.text = candidate.notes
 

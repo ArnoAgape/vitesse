@@ -10,16 +10,6 @@ import java.time.format.DateTimeParseException
 
 object Validation {
 
-    fun validateField(context: Context, value: String, inputLayout: TextInputLayout): Boolean {
-        return if (value.isBlank()) {
-            inputLayout.error = context.getString(R.string.mandatory_field)
-            false
-        } else {
-            inputLayout.error = null
-            true
-        }
-    }
-
     fun isEmailValid(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
