@@ -14,12 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-
 class CandidateRepositoryTest {
 
     private val dao: CandidateDao = mockk()
@@ -38,7 +32,7 @@ class CandidateRepositoryTest {
         val candidateDto = CandidateDto(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",
@@ -71,7 +65,7 @@ class CandidateRepositoryTest {
         val candidateDto = CandidateDto(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",
@@ -103,7 +97,7 @@ class CandidateRepositoryTest {
         val candidateDto = Candidate(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",
@@ -142,7 +136,7 @@ class CandidateRepositoryTest {
         val candidateDto = CandidateDto(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",
@@ -169,7 +163,7 @@ class CandidateRepositoryTest {
         val candidateDto = CandidateDto(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",
@@ -196,7 +190,7 @@ class CandidateRepositoryTest {
         val candidateDto = CandidateDto(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",
@@ -237,7 +231,7 @@ class CandidateRepositoryTest {
         val candidateDto = CandidateDto(
             id = 1,
             firstname = "martin",
-            lastname = "dupond",
+            lastname = "pond",
             phone = "0606060606",
             email = "test@mail.fr",
             birthdate = "03/10/2000",

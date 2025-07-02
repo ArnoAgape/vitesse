@@ -1,22 +1,17 @@
 package com.openclassrooms.vitesse.utils
 
-import android.icu.text.NumberFormat
 import com.openclassrooms.vitesse.ui.utils.Format.convertSalaryToPounds
 import com.openclassrooms.vitesse.ui.utils.Format.formatBirthdateForDisplay
 import com.openclassrooms.vitesse.ui.utils.Format.formatBirthdateForLocale
 import com.openclassrooms.vitesse.ui.utils.Format.formatBirthdateWithAge
 import com.openclassrooms.vitesse.ui.utils.Validation
-import io.mockk.mockk
 import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
 import java.util.Locale
-import kotlin.math.exp
 import kotlin.test.assertEquals
 
 class UtilsTest {

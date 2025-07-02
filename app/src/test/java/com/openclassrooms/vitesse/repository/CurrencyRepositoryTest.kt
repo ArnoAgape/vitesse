@@ -13,10 +13,7 @@ import kotlin.test.assertEquals
 class CurrencyRepositoryTest {
 
     private val api: CurrencyApiService = mockk()
-
     private lateinit var repo: CurrencyRepository
-
-    private lateinit var response: EuroToGbpResponse
 
     @Before
     fun setup() {

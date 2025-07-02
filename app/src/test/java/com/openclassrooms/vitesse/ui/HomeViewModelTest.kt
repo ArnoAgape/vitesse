@@ -1,27 +1,13 @@
 package com.openclassrooms.vitesse.ui
 
-
 import app.cash.turbine.test
-import com.openclassrooms.vitesse.data.dao.CandidateDao
 import com.openclassrooms.vitesse.data.repository.CandidateRepository
 import com.openclassrooms.vitesse.domain.model.Candidate
-import com.openclassrooms.vitesse.states.State
-import com.openclassrooms.vitesse.ui.home.HomeUIState
 import com.openclassrooms.vitesse.ui.home.HomeViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -84,7 +70,7 @@ class HomeViewModelTest {
     @Test
     fun `uiState shows all candidates when showFavorites is false`() = runTest {
         viewModel.uiState.test {
-            skipItems(3) // ignore état initial
+            skipItems(3)
 
             val filtered = awaitItem()
 

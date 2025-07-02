@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.VisibleForTesting
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,11 +31,9 @@ class HomeViewModel @Inject constructor(
 
     /** All candidates retrieved from the database. */
     private val _allCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
-    val allCandidatesFlow: StateFlow<List<Candidate>> = _allCandidatesFlow.asStateFlow()
 
     /** Favorite candidates retrieved from the database. */
     private val _favoriteCandidatesFlow = MutableStateFlow<List<Candidate>>(emptyList())
-    val favoriteCandidatesFlow: StateFlow<List<Candidate>> = _favoriteCandidatesFlow.asStateFlow()
 
     /** Toggle to show either all or only favorite candidates. */
     val showFavorites = MutableStateFlow(false)
@@ -113,16 +110,6 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    @VisibleForTesting
-    fun setAllCandidates(candidates: List<Candidate>) {
-        _allCandidatesFlow.value = candidates
-    }
-
-    @VisibleForTesting
-    fun setFavoriteCandidates(candidates: List<Candidate>) {
-        _favoriteCandidatesFlow.value = candidates
     }
 }
 

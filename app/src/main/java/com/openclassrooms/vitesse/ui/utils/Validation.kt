@@ -1,9 +1,6 @@
 package com.openclassrooms.vitesse.ui.utils
 
-import android.content.Context
 import android.util.Patterns
-import com.google.android.material.textfield.TextInputLayout
-import com.openclassrooms.vitesse.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
