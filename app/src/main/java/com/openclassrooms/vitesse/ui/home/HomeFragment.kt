@@ -52,8 +52,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
         observeViewModel()
     }
 
-    // region Setup UI
-
     /**
      * Sets up the RecyclerView with adapter and layout manager.
      */
@@ -105,10 +103,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
         })
     }
 
-    // endregion
-
-    // region Observers
-
     /**
      * Observes UI state, candidate list and error messages from the ViewModel.
      */
@@ -156,17 +150,14 @@ class HomeFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    // endregion
-
-    // region Navigation
-
     /**
      * Handles click on a candidate item. Navigates to the detail screen.
      *
      * @param item The clicked [Candidate]
      */
     override fun onItemClick(item: Candidate) {
-        item.id?.let { id ->
+        val id = item.id
+        if (id != null) {
             val fragment = DetailFragment.newInstance(id)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
@@ -174,7 +165,4 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 .commit()
         }
     }
-
-    // endregion
 }
-

@@ -67,6 +67,10 @@ class HomeViewModel @Inject constructor(
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    /**
+     * Combined UI state for the home screen,
+     * merging displayedCandidatesFlow and selected candidate data.
+     */
     val uiState: StateFlow<HomeUIState> = combine(_uiState, displayedCandidatesFlow)
     { uiState, candidates ->
         HomeUIState(result = uiState, candidate = candidates)
@@ -112,7 +116,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 }
-
 
 /**
  * Represents the state of the Home screen.

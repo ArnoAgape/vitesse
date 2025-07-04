@@ -41,6 +41,10 @@ class DetailViewModel @Inject constructor(
     private val _errorFlow = MutableStateFlow<String?>(null)
     val errorFlow: StateFlow<String?> = _errorFlow.asStateFlow()
 
+    /**
+     * Combined UI state for the detail screen,
+     * merging GBP rate and selected candidate data.
+     */
     val uiState: StateFlow<DetailUIState> = combine(_gbpFlow, _candidateFlow)
     { gbp, candidate ->
         DetailUIState(result = gbp, candidate = candidate)
@@ -54,7 +58,7 @@ class DetailViewModel @Inject constructor(
      * Loads and emits the candidate for the given ID.
      * @param id Candidate's unique identifier.
      */
-    fun getCandidateById(id: Long?) {
+    fun getCandidateById(id: Long) {
         viewModelScope.launch {
             val result = repository.getCandidate(id)
             if (result.isSuccess) {
@@ -100,17 +104,20 @@ class DetailViewModel @Inject constructor(
      */
     fun toggleFavorite() {
         val candidate = uiState.value.candidate
-        if (candidate == null) {
-            return
-        }
+        val id = candidate?.id
+        val isFavorite = candidate?.isFavorite
+
         viewModelScope.launch {
-            repository.updateFavorite(candidate.id, !candidate.isFavorite)
-            getCandidateById(candidate.id)
+            if (id != null && isFavorite != null) {
+                repository.updateFavorite(id, !isFavorite)
+                getCandidateById(id)
+            }
         }
     }
+
 }
 
 data class DetailUIState(
     val result: Double?,
-    val candidate: Candidate?
+    val candidate: Candidate? = null
 )

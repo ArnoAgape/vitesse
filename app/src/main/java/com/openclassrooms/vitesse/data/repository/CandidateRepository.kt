@@ -45,7 +45,7 @@ class CandidateRepository(
      * @param id The candidate's ID.
      * @return [Result] containing the [Candidate] if found, or an exception otherwise.
      */
-    suspend fun getCandidate(id: Long?): Result<Candidate> {
+    suspend fun getCandidate(id: Long): Result<Candidate> {
         return withContext(Dispatchers.IO) {
             try {
                 val user = candidateDao.getCandidateById(id).let { Candidate.fromDto(it) }
@@ -97,7 +97,7 @@ class CandidateRepository(
      * @param isFavorite New favorite status to apply.
      * @return [Result] indicating success or failure.
      */
-    suspend fun updateFavorite(id: Long?, isFavorite: Boolean): Result<Unit> {
+    suspend fun updateFavorite(id: Long, isFavorite: Boolean): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
                 candidateDao.updateFavorite(id, isFavorite)
