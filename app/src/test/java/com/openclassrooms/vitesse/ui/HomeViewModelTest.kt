@@ -8,6 +8,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -68,7 +69,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `uiState shows all candidates when showFavorites is false`() = runTest {
+    fun `uiState shows all candidates`() = runTest {
         viewModel.uiState.test {
             skipItems(3)
 
@@ -76,7 +77,8 @@ class HomeViewModelTest {
 
             println("🔍 $filtered")
 
-            assertEquals(4, filtered.candidate.size) // David, Bob, Charlie
+            assertEquals(4, filtered.candidate.size) // David, Bob, Charlie, Alice
+
             cancelAndIgnoreRemainingEvents()
         }
     }
