@@ -10,8 +10,8 @@ data class Candidate(
     val email: String,
     val birthdate: String,
     val salary: Int,
-    val notes: String?,
-    val profilePicture: String? = null,
+    val notes: String,
+    val profilePicture: String,
     var isFavorite: Boolean = false
 ) {
 

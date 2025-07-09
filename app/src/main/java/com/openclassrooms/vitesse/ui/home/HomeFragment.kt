@@ -133,7 +133,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
                                 binding.noCandidate.visibility = View.VISIBLE
                             }
 
-                            else -> Unit
+                            is State.Idle -> Unit
                         }
                     }
                 }

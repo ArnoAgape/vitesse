@@ -173,10 +173,6 @@ class DetailFragment : Fragment() {
             .error(R.drawable.ic_profile_pic)
             .into(profilePicture)
 
-        favoriteMenuItem?.setIcon(
-            if (candidate.isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
-        )
-
         val toolbar = binding.toolbar
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
