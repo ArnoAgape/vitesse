@@ -8,7 +8,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -30,22 +29,22 @@ class HomeViewModelTest {
                         Candidate(
                             1, "David", "Bowie", "phone",
                             "email", "birth",
-                            1000, null, isFavorite = false
+                            1000, "", profilePicture = "", isFavorite = false
                         ),
                         Candidate(
                             2, "Bob", "Marley", "phone",
                             "email", "birth",
-                            1000, null, isFavorite = false
+                            1000, "", profilePicture = "", isFavorite = false
                         ),
                         Candidate(
                             3, "Charlie", "Chocolate", "phone",
                             "email", "birth",
-                            1000, null, isFavorite = false
+                            1000, "", profilePicture = "", isFavorite = false
                         ),
                         Candidate(
                             4, "Alice", "Wonderland", "phone",
                             "email", "birth",
-                            1000, null, isFavorite = true
+                            1000, "", profilePicture = "", isFavorite = true
                         )
                     )
                 )
@@ -59,7 +58,7 @@ class HomeViewModelTest {
                         Candidate(
                             4, "Alice", "Wonderland", "phone",
                             "email", "birth",
-                            1000, null, isFavorite = true
+                            1000, "", profilePicture = "", isFavorite = true
                         )
                     )
                 )

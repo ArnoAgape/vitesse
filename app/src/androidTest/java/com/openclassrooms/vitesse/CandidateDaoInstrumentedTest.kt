@@ -46,8 +46,8 @@ class CandidateDaoInstrumentedTest {
             email = "email",
             birthdate = "birth",
             salary = 1000,
-            notes = null,
-            profilePicture = null,
+            notes = "",
+            profilePicture = "",
             isFavorite = true
         )
 
@@ -67,8 +67,8 @@ class CandidateDaoInstrumentedTest {
             email = "email",
             birthdate = "birth",
             salary = 1000,
-            notes = null,
-            profilePicture = null,
+            notes = "",
+            profilePicture = "",
             isFavorite = true
         )
 
@@ -92,8 +92,8 @@ class CandidateDaoInstrumentedTest {
             email = "email",
             birthdate = "birth",
             salary = 1000,
-            notes = null,
-            profilePicture = null,
+            notes = "",
+            profilePicture = "",
             isFavorite = true
         )
 
