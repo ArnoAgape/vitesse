@@ -111,6 +111,7 @@ class HomeViewModel @Inject constructor(
                     _favoriteCandidatesFlow.value = it
                 }.onFailure {
                     _errorFlow.value = it.message ?: "Error loading the favorite candidates"
+                    _uiState.update { State.Error }
                 }
             }
         }
