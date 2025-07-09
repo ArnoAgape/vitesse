@@ -23,7 +23,7 @@ object Validation {
                 val formatter = DateTimeFormatter.ofPattern(pattern)
                 LocalDate.parse(birthdate, formatter)
                 true
-            } catch (e: DateTimeParseException) {
+            } catch (_: DateTimeParseException) {
                 false
             }
         }

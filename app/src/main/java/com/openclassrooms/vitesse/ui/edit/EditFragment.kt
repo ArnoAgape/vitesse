@@ -17,7 +17,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.openclassrooms.vitesse.R
 import com.openclassrooms.vitesse.databinding.EditScreenBinding
-import com.openclassrooms.vitesse.domain.model.Candidate
 import com.openclassrooms.vitesse.ui.home.HomeFragment
 import com.openclassrooms.vitesse.ui.utils.Format
 import com.openclassrooms.vitesse.ui.utils.Validation
@@ -37,9 +36,6 @@ class EditFragment : Fragment() {
 
     private lateinit var binding: EditScreenBinding
     private val viewModel: EditViewModel by viewModels()
-
-    private var candidateId: Long = -1L
-    private lateinit var candidate: Candidate
 
     private var selectedImageUri: Uri? = null
 
@@ -64,12 +60,10 @@ class EditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        candidateId = requireArguments().getLong(ARG_CANDIDATE_ID)
-
+        val candidateId = requireArguments().getLong(ARG_CANDIDATE_ID)
         viewModel.getCandidateById(candidateId)
 
         setupListeners()
-        setupSave()
         setupToolbar()
         observeCandidate()
         observeErrors()
@@ -109,23 +103,33 @@ class EditFragment : Fragment() {
     private fun observeCandidate() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.candidateFlow.collect { candidateResult ->
-                    candidateResult?.let {
-                        candidate = it
-                        binding.firstNameEdit.setText(it.firstname)
-                        binding.lastNameEdit.setText(it.lastname)
-                        binding.phoneEdit.setText(it.phone)
-                        binding.emailEdit.setText(it.email)
-                        binding.birthdateEdit.setText(Format.formatBirthdateForLocale(it.birthdate))
-                        binding.salaryEdit.setText(it.salary.toString())
-                        binding.notesEdit.setText(it.notes)
-                        Glide.with(binding.root.context)
-                            .load(it.profilePicture)
-                            .placeholder(R.drawable.ic_profile_pic)
-                            .error(R.drawable.ic_profile_pic)
-                            .into(binding.profilePictureEdit)
+                launch {
+                    viewModel.candidateFlow.collect { candidateResult ->
+                        candidateResult?.let {
+                            binding.firstNameEdit.setText(it.firstname)
+                            binding.lastNameEdit.setText(it.lastname)
+                            binding.phoneEdit.setText(it.phone)
+                            binding.emailEdit.setText(it.email)
+                            binding.birthdateEdit.setText(Format.formatBirthdateForLocale(it.birthdate))
+                            binding.salaryEdit.setText(it.salary.toString())
+                            binding.notesEdit.setText(it.notes)
+                            Glide.with(binding.root.context)
+                                .load(it.profilePicture)
+                                .placeholder(R.drawable.ic_profile_pic)
+                                .error(R.drawable.ic_profile_pic)
+                                .into(binding.profilePictureEdit)
+                        }
+                        setupSave()
                     }
                 }
+                launch {
+                    viewModel.errorFlow.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -135,15 +139,17 @@ class EditFragment : Fragment() {
      */
     private fun setupSave() {
         binding.saveButton.setOnClickListener {
+            val currentCandidate = viewModel.candidateFlow.value ?: return@setOnClickListener
+
             val newFirstName = binding.firstNameEdit.text.toString().trim()
             val newLastName = binding.lastNameEdit.text.toString().trim()
             val newPhone = binding.phoneEdit.text.toString().trim()
             val newEmail = binding.emailEdit.text.toString().trim()
             val newBirthdate = viewModel.getBirthdateForDb().takeIf {
-                it.isNotBlank() } ?: candidate.birthdate
+                it.isNotBlank() } ?: currentCandidate.birthdate
             val newSalary = binding.salaryEdit.text.toString().trim().toIntOrNull() ?: 0
             val newNotes = binding.notesEdit.text.toString().trim()
-            val newProfilePicture = selectedImageUri?.toString() ?: candidate.profilePicture
+            val newProfilePicture = selectedImageUri?.toString() ?: currentCandidate.profilePicture
 
             val isFirstNameValid =
                 ValidationUi.validateField(requireContext(), newFirstName, binding.firstName)
@@ -156,8 +162,7 @@ class EditFragment : Fragment() {
             if (!isFirstNameValid || !isLastNameValid || !isPhoneValid || !isEmailValid || !isBirthdateValid)
                 return@setOnClickListener
 
-            val updatedCandidate = Candidate(
-                id = candidateId,
+            val updatedCandidate = currentCandidate.copy(
                 firstname = newFirstName,
                 lastname = newLastName,
                 phone = newPhone,
@@ -165,8 +170,7 @@ class EditFragment : Fragment() {
                 birthdate = newBirthdate,
                 salary = newSalary,
                 notes = newNotes,
-                profilePicture = newProfilePicture,
-                isFavorite = candidate.isFavorite
+                profilePicture = newProfilePicture
             )
 
             viewModel.updateCandidate(updatedCandidate)
