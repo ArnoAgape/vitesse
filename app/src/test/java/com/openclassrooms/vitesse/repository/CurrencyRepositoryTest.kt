@@ -2,7 +2,7 @@ package com.openclassrooms.vitesse.repository
 
 import com.openclassrooms.vitesse.data.network.CurrencyApiService
 import com.openclassrooms.vitesse.data.repository.CurrencyRepository
-import com.openclassrooms.vitesse.ui.detail.EuroToGbpResponse
+import com.openclassrooms.vitesse.ui.detail.EuroToCurrencyResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -23,7 +23,7 @@ class CurrencyRepositoryTest {
     @Test
     fun `get euro amount converted into gbp`() = runTest {
 
-        val gbp = EuroToGbpResponse(mapOf("gbp" to 0.89))
+        val gbp = EuroToCurrencyResponse(mapOf("gbp" to 0.89))
 
         coEvery { api.getGbpRate() } returns gbp
 
@@ -38,7 +38,7 @@ class CurrencyRepositoryTest {
     @Test
     fun `get euro amount converted into gbp with no value`() = runTest {
 
-        val gbp = EuroToGbpResponse(mapOf())
+        val gbp = EuroToCurrencyResponse(mapOf())
 
         coEvery { api.getGbpRate() } returns gbp
 

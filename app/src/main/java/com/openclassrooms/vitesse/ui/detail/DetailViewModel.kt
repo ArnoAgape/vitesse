@@ -35,7 +35,7 @@ class DetailViewModel @Inject constructor(
     private val _candidateFlow = MutableStateFlow<Candidate?>(null)
 
     /** Emits the latest exchange rate EUR -> GBP. */
-    private val _gbpFlow = MutableStateFlow<Double?>(null)
+    private val _currencyFlow = MutableStateFlow<Double?>(null)
 
     /** Emits one-time error messages for the UI. */
     private val _errorFlow = MutableStateFlow<String?>(null)
@@ -45,7 +45,7 @@ class DetailViewModel @Inject constructor(
      * Combined UI state for the detail screen,
      * merging GBP rate and selected candidate data.
      */
-    val uiState: StateFlow<DetailUIState> = combine(_gbpFlow, _candidateFlow)
+    val uiState: StateFlow<DetailUIState> = combine(_currencyFlow, _candidateFlow)
     { gbp, candidate ->
         DetailUIState(result = gbp, candidate = candidate)
     }.stateIn(viewModelScope, SharingStarted.Lazily, DetailUIState(null, null))
@@ -78,7 +78,7 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val gbpRate = currencyRepository.getEuroToGbpRate()
-                _gbpFlow.value = gbpRate
+                _currencyFlow.value = gbpRate
                 Log.d("Currency", "1 EUR = $gbpRate GBP")
             } catch (e: Exception) {
                 _errorFlow.value = "API Error : ${e.message}"
