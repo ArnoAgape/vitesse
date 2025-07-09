@@ -111,25 +111,26 @@ class DetailFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    val candidate = state.candidate
-                    val gbp = state.result
+                launch {
+                    viewModel.uiState.collect { state ->
+                        val candidate = state.candidate
+                        val gbp = state.result
 
-                    if (candidate != null) {
-                        renderDetails(candidate)
-                        updateStarIcon()
+                        if (candidate != null) {
+                            renderDetails(candidate)
+                            updateStarIcon()
 
-                        if (gbp != null) {
-                            val salaryInPounds = Format.convertSalaryToPounds(candidate.salary, gbp)
-                            val formatted = Format.formatAmount(salaryInPounds, Locale.UK)
-                            binding.salaryConverted.text =
-                                getString(R.string.expected_salary_pounds, formatted)
+                            if (gbp != null) {
+                                val salaryInPounds = Format.convertSalaryToPounds(candidate.salary, gbp)
+                                val formatted = Format.formatAmount(salaryInPounds, Locale.UK)
+                                binding.salaryConverted.text =
+                                    getString(R.string.expected_salary_pounds, formatted)
+                            }
                         }
-
                     }
                 }
+                launch { collectErrors() }
             }
-            launch { collectErrors() }
         }
     }
 
